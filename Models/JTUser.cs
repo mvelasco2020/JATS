@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,7 +20,25 @@ namespace JATS.Models
         public string FullName { get { return $"{FirstName} {LastName}"; } }
 
 
+        //File upload
+        [NotMapped]
+        [DataType(DataType.Upload)]
+        public IFormFile AvatarFormFile { get; set; }
 
+        [DisplayName("Avatar")]
+        public string AvatarFileName { get; set; }
+        public byte[] AvatarData { get; set; }
+
+        [DisplayName("File Extension")]
+        public string AvatarFileContentType { get; set; }
+
+
+        public int? CompanyId { get; set; }
+
+        //Nav Props
+        public virtual Company Company { get; set; }
+        public virtual ICollection<Project> Projects { get; set; }
+        ///
     }
 
 

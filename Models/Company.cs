@@ -16,6 +16,7 @@ namespace JATS.Models
         public virtual ICollection<JTUser> Members { get; set; }
 
         public virtual ICollection<Project> Projects { get; set; }
+
         ///
     }
 }

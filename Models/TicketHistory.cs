@@ -7,7 +7,7 @@ namespace JATS.Models
 
         public int Id { get; set; }
 
-        public string TicketId { get; set; }
+        public int TicketId { get; set; }
 
         [DisplayName("Updated Item")]
         public string Property { get; set; }
