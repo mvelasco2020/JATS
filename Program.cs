@@ -1,5 +1,7 @@
 using JATS.Data;
 using JATS.Models;
+using JATS.Services;
+using JATS.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,8 +23,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddScoped<IRolesService, RoleService>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 
 
 
