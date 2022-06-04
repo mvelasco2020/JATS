@@ -24,6 +24,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IRolesService, RoleService>();
+builder.Services.AddScoped<ICompanyInfoService, CompanyInfoService>();
+
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 

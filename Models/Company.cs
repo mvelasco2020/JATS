@@ -17,6 +17,9 @@ namespace JATS.Models
 
         public virtual ICollection<Project> Projects { get; set; }
 
+        public virtual ICollection<Invite> Invites { get; set; }
+
+
         ///
     }
 }
