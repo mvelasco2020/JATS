@@ -28,6 +28,9 @@ namespace JATS.Models
         [DisplayName("Sender")]
         public string SenderId { get; set; }
 
+        [Required]
+        [DisplayName("Message")]
+        public string Message { get; set; }
 
         //Nav Props
         public virtual Ticket Ticket { get; set; }
