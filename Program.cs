@@ -25,8 +25,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IRolesService, RoleService>();
 builder.Services.AddScoped<ICompanyInfoService, CompanyInfoService>();
-
-
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 

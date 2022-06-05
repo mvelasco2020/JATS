@@ -20,7 +20,7 @@ namespace JATS.Services.Interfaces
 
         public Task<List<Project>> GetArchivedProjectsByCompany(int companyId);
 
-        public Task<List<JTUser>> GetDevelopersOnProjectAsync(int projectId);
+        public Task<List<JTUser>> GetTechniciansOnProjectAsync(int projectId);
 
         public Task<JTUser> GetProjectManagerAsync(int projectId);
 

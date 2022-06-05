@@ -1,5 +1,6 @@
 ﻿using JATS.Data;
 using JATS.Models;
+using JATS.Models.Enums;
 using JATS.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +10,13 @@ namespace JATS.Services
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly IRolesService _roleService;
 
-        public ProjectService(ApplicationDbContext context)
+        public ProjectService(ApplicationDbContext context,
+                              IRolesService roleService)
         {
             _context = context;
+            _roleService = roleService;
         }
         public async Task AddNewProjectAsync(Project project)
         {
@@ -22,7 +26,37 @@ namespace JATS.Services
 
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
-            throw new NotImplementedException();
+
+            JTUser currentPM = await GetProjectManagerAsync(projectId);
+            Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
+            if (currentPM is not null)
+            {
+                try
+                {
+                    await RemoveProjectManagerAsync(projectId);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"{ex.Message}");
+
+                    return false;
+                }
+            }
+
+            try
+            {
+                bool result = await _roleService.AddUserToRole(await _context
+                      .Users
+                      .FirstOrDefaultAsync(u => u.Id == userId),
+                      Roles.ProjectManager.ToString());
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex.Message}");
+                return false;
+            }
+
         }
 
         public async Task<bool> AddUserToProjectAsync(string userId, int projectId)
@@ -65,7 +99,18 @@ namespace JATS.Services
 
         public async Task<List<JTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
         {
-            throw new NotImplementedException();
+            List<JTUser> technicians = await GetProjectMembersByRoleAsync(projectId,
+                Roles.Technician.ToString());
+
+            List<JTUser> submitters = await GetProjectMembersByRoleAsync(projectId,
+                Roles.Submitter.ToString());
+
+            List<JTUser> admins = await GetProjectMembersByRoleAsync(projectId,
+                Roles.Admin.ToString());
+
+            List<JTUser> teamMembers = technicians.Concat(submitters).Concat(admins).ToList();
+            return teamMembers;
+
         }
 
         public async Task<List<Project>> GetAllProjectsByCompany(int companyId)
@@ -112,7 +157,7 @@ namespace JATS.Services
             return projects.Where(p => p.Archived == true).ToList();
         }
 
-        public async Task<List<JTUser>> GetDevelopersOnProjectAsync(int projectId)
+        public async Task<List<JTUser>> GetTechniciansOnProjectAsync(int projectId)
         {
             throw new NotImplementedException();
         }
@@ -132,12 +177,41 @@ namespace JATS.Services
 
         public async Task<JTUser> GetProjectManagerAsync(int projectId)
         {
-            throw new NotImplementedException();
+            Project project = await _context
+                .Projects
+                .Include(p => p.Members)
+                .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            foreach (var member in project?.Members)
+            {
+                if (await _roleService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                {
+                    return member;
+                }
+            }
+
+            return null;
         }
 
         public async Task<List<JTUser>> GetProjectMembersByRoleAsync(int projectId, string role)
         {
-            throw new NotImplementedException();
+            Project project = await _context
+                .Projects
+                .Include(p => p.Members)
+                .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            List<JTUser> membersInRole = new();
+
+            foreach (var member in project.Members)
+            {
+                if (await _roleService.IsUserInRoleAsync(member, role))
+                {
+                    membersInRole.Add(member);
+                }
+            }
+
+            return membersInRole;
+
         }
 
         public async Task<List<JTUser>> GetSubmittersOnProjectAsync(int projectId)
@@ -186,7 +260,13 @@ namespace JATS.Services
 
         public async Task<List<JTUser>> GetUsersNotOnProjectAsync(int projectId, int companyId)
         {
-            throw new NotImplementedException();
+            List<JTUser> usersinCompany = await _context
+                .Users
+                .Where(u => u.Projects.All(p => p.Id != projectId))
+                .Where(u => u.CompanyId == companyId)
+                .ToListAsync();
+
+            return usersinCompany;
         }
 
         public async Task<bool> IsUserOnProjectAsync(string userId, int projectId)
@@ -219,6 +299,28 @@ namespace JATS.Services
         public async Task RemoveProjectManagerAsync(int projectId)
         {
 
+            Project project = await _context
+                .Projects
+                .Include(p => p.Members)
+                .FirstOrDefaultAsync(p => p.Id == projectId);
+
+
+            try
+            {
+                foreach (var member in project?.Members)
+                {
+                    if (await _roleService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                    {
+                        await RemoveUserFromProjectAsync(member.Id, projectId);
+
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
 
         }
 
@@ -259,7 +361,30 @@ namespace JATS.Services
 
         public async Task RemoveUsersFromProjectByRoleAsync(string role, int projectId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<JTUser> members = await GetProjectMembersByRoleAsync(projectId, role);
+                Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
+
+                foreach (var user in members)
+                {
+                    try
+                    {
+                        project.Members.Remove(user);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task UpdateProjectAsync(Project project)
