@@ -34,6 +34,8 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IInviteService, InviteService>();
+builder.Services.AddScoped<IFileService, FileService>();
+
 ///
 
 //Mail Services/Setttings
