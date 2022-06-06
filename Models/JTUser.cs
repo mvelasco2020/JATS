@@ -26,11 +26,11 @@ namespace JATS.Models
         public IFormFile AvatarFormFile { get; set; }
 
         [DisplayName("Avatar")]
-        public string AvatarFileName { get; set; }
-        public byte[] AvatarData { get; set; }
+        public string? AvatarFileName { get; set; }
+        public byte[]? AvatarData { get; set; }
 
         [DisplayName("File Extension")]
-        public string AvatarFileContentType { get; set; }
+        public string? AvatarFileContentType { get; set; }
 
 
         public int? CompanyId { get; set; }

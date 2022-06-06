@@ -3,6 +3,7 @@ using System;
 using JATS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JATS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220606023338_updateavatarasnullable4")]
+    partial class updateavatarasnullable4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -318,12 +320,14 @@ namespace JATS.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerUserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("integer");
 
                     b.Property<string>("TechnicianUserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("TicketPriorityId")
@@ -765,7 +769,9 @@ namespace JATS.Migrations
                 {
                     b.HasOne("JATS.Models.JTUser", "OwnerUser")
                         .WithMany()
-                        .HasForeignKey("OwnerUserId");
+                        .HasForeignKey("OwnerUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("JATS.Models.Project", "Project")
                         .WithMany("Tickets")
@@ -775,7 +781,9 @@ namespace JATS.Migrations
 
                     b.HasOne("JATS.Models.JTUser", "TechnicianUser")
                         .WithMany()
-                        .HasForeignKey("TechnicianUserId");
+                        .HasForeignKey("TechnicianUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("JATS.Models.TicketPriority", "TicketPriority")
                         .WithMany()

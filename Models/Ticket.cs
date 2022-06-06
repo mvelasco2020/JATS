@@ -43,10 +43,10 @@ namespace JATS.Models
         public int TicketStatusId { get; set; }
 
         [DisplayName("Ticket Owner")]
-        public string OwnerUserId { get; set; }
+        public string? OwnerUserId { get; set; }
 
         [DisplayName("Ticket Technician")]
-        public string TechnicianUserId { get; set; }
+        public string? TechnicianUserId { get; set; }
 
         //Nav Props
         public virtual Project Project { get; set; }

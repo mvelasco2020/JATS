@@ -21,9 +21,14 @@ builder.Services.AddControllersWithViews();
 
 //Database
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseNpgsql(connectionString));
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(DataUtility.GetConnectionString(builder.Configuration),
+    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 ///
 
 //Services
@@ -48,6 +53,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
 var app = builder.Build();
+
+//Allow datetime wihtouth TZ to work
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+///
+
+//Run Datautility 
+await DataUtility.ManageDataAsync(app);
+///
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

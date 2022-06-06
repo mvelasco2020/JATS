@@ -32,11 +32,11 @@ namespace JATS.Models
         public IFormFile ImageFormFile { get; set; }
 
         [DisplayName("File Name")]
-        public string ImageFileName { get; set; }
-        public byte[] ImageFileData { get; set; }
+        public string? ImageFileName { get; set; }
+        public byte[]? ImageFileData { get; set; }
 
         [DisplayName("File Extension")]
-        public string FileContentType { get; set; }
+        public string? FileContentType { get; set; }
 
         [DisplayName("Company")]
         public int? CompanyId { get; set; }
