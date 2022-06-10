@@ -17,7 +17,7 @@ namespace JATS.Services
             return await _context.ProjectPriorities.ToListAsync();
         }
 
-        public Task<List<TicketPriority>> GetTicketPriorituesAsync()
+        public Task<List<TicketPriority>> GetTicketPrioritiesAsync()
         {
             throw new NotImplementedException();
         }
