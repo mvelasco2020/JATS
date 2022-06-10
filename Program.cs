@@ -42,7 +42,7 @@ builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IInviteService, InviteService>();
 builder.Services.AddScoped<IFileService, FileService>();
-
+builder.Services.AddScoped<ILookupService, LookupService>();
 ///
 
 //Mail Services/Setttings

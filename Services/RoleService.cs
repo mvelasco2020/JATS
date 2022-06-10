@@ -2,6 +2,7 @@
 using JATS.Models;
 using JATS.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace JATS.Services
 {
@@ -24,6 +25,19 @@ namespace JATS.Services
 
             return result;
 
+        }
+
+        public async Task<List<IdentityRole>> GetAllRolesAsync()
+        {
+            try
+            {
+                return await _context.Roles.ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<string> GetRoleNameByIdAsync(string roleId)
@@ -69,7 +83,7 @@ namespace JATS.Services
             return result;
         }
 
-        public async Task<bool> RemoveUserFromRoleAsync(JTUser user, IEnumerable<string> roles)
+        public async Task<bool> RemoveUserFromRolesAsync(JTUser user, IEnumerable<string> roles)
         {
             bool result = (await _userManager.RemoveFromRolesAsync(user, roles)).Succeeded;
             return result;
