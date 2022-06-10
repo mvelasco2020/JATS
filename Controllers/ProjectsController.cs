@@ -7,16 +7,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JATS.Data;
 using JATS.Models;
+using JATS.Extensions;
+using JATS.Models.ViewModel;
+using JATS.Services.Interfaces;
+using JATS.Models.Enums;
 
 namespace JATS.Controllers
 {
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IRolesService _rolesService;
+        private readonly ILookupService _lookupService;
 
-        public ProjectsController(ApplicationDbContext context)
+        public ProjectsController(ApplicationDbContext context,
+                                    IRolesService rolesService,
+                                    ILookupService lookupService)
         {
             _context = context;
+            _rolesService = rolesService;
+            _lookupService = lookupService;
         }
 
         // GET: Projects
@@ -47,11 +57,22 @@ namespace JATS.Controllers
         }
 
         // GET: Projects/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id");
-            return View();
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            AddProjectWithPMViewModel model = new();
+            model.PMList = new SelectList(await _rolesService
+                .GetUsersInRoleAsync(Roles.ProjectManager.ToString(),
+                companyId)
+                , "Id"
+                , "FullName");
+
+            model.PriorityList = new SelectList(await _lookupService
+                .GetProjectPrioritiesAsync()
+                , "Id"
+                , "Name");
+            return View(model);
         }
 
         // POST: Projects/Create
@@ -161,14 +182,14 @@ namespace JATS.Controllers
             {
                 _context.Projects.Remove(project);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProjectExists(int id)
         {
-          return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
