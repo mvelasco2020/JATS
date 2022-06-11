@@ -1,4 +1,5 @@
-﻿@model IEnumerable<JATS.Models.Project>
+﻿@using JATS.Models.Enums;
+@model IEnumerable<JATS.Models.Project>
 
 @{
     ViewData["Title"] = "Index";
@@ -47,6 +48,9 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
+    @if (item.Archived == false)
+    {
+        
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -60,18 +64,64 @@
             <td>
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
+
+
             <td>
+                            @if (item.ImageFileData != null)
+                        {
+                            
+                        <img
+                    class="img-fluid img-thumbnail"
+                    style="width:100px;height:80px"
+                    src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))"
+                    />        
+                        }
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.Company.Id)
+            </td>
+                        <td>
                 @Html.DisplayFor(modelItem => item.Archived)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageFileName)
+                @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageFileData)
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+            </td>
+        </tr>
+            }
+            else if (User.IsInRole(Roles.Admin.ToString()) && item.Archived == true)
+            {
+                        
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FileContentType)
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+
+
+            <td>
+                            @if (item.ImageFileData != null)
+                        {
+                            
+                        <img
+                    class="img-fluid img-thumbnail"
+                    style="width:100px;height:80px"
+                    src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))"
+                    />        
+                        }
+           
             <td>
                 @Html.DisplayFor(modelItem => item.Company.Id)
             </td>
@@ -81,9 +131,10 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
             </td>
         </tr>
-}
+            }
+        }
     </tbody>
 </table>

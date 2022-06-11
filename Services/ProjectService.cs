@@ -91,10 +91,25 @@ namespace JATS.Services
 
         public async Task ArchiveProjectAsync(Project project)
         {
-            project.Archived = true;
-            _context.Update(project);
-            await _context.SaveChangesAsync();
 
+            try
+            {
+                project.Archived = true;
+                await UpdateProjectAsync(project);
+                foreach (var ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = true;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                }
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<List<JTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
@@ -391,6 +406,26 @@ namespace JATS.Services
         {
             _context.Update(project);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task RestoreProjectAsync(Project project)
+        {
+            try
+            {
+                project.Archived = false;
+                await UpdateProjectAsync(project);
+                foreach (var ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = false;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

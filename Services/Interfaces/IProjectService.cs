@@ -11,6 +11,8 @@ namespace JATS.Services.Interfaces
         public Task<bool> AddUserToProjectAsync(string userId, int projectId);
 
         public Task ArchiveProjectAsync(Project project);
+        public Task RestoreProjectAsync(Project project);
+
 
         public Task<List<Project>> GetAllProjectsByCompany(int companyId);
 
