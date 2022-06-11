@@ -131,19 +131,26 @@ namespace JATS.Controllers
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Projects == null)
-            {
-                return NotFound();
-            }
 
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            AddProjectWithPMViewModel model = new();
+            model.Project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+            if (model.Project is null)
             {
                 return NotFound();
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", project.ProjectPriorityId);
-            return View(project);
+            model.PMList = new SelectList(await _rolesService
+                .GetUsersInRoleAsync(Roles.ProjectManager.ToString(),
+                companyId)
+                , "Id"
+                , "FullName");
+
+            model.PriorityList = new SelectList(await _lookupService
+                .GetProjectPrioritiesAsync()
+                , "Id"
+                , "Name");
+            return View(model);
         }
 
         // POST: Projects/Edit/5
@@ -151,36 +158,40 @@ namespace JATS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StartDate,EndDate,Archived,ImageFileName,ImageFileData,FileContentType,CompanyId,ProjectPriorityId")] Project project)
+        public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
-            if (id != project.Id)
+            if (model is not null)
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
+                int companyId = User.Identity.GetCompanyId().Value;
                 try
                 {
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
+                    if (model.Project.ImageFormFile is not null)
+                    {
+                        model.Project.ImageFileData = await _fileService
+                            .ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+
+                        model.Project.ImageFileName = model.Project.ImageFormFile.FileName;
+                        model.Project.FileContentType = model.Project.ImageFormFile.ContentType;
+                    }
+
+                    await _projectService.UpdateProjectAsync(model.Project);
+
+
+                    if (!string.IsNullOrEmpty(model.PMid))
+                    {
+                        await _projectService.AddProjectManagerAsync(model.PMid, model.Project.Id);
+                    }
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!ProjectExists(project.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Index");
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", project.ProjectPriorityId);
-            return View(project);
+
+            return View(model);
         }
 
         // GET: Projects/Delete/5

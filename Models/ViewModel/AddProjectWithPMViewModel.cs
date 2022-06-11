@@ -12,7 +12,6 @@ namespace JATS.Models.ViewModel
 
         public SelectList PriorityList { get; set; }
 
-        public int ProjectPriority { get; set; }
 
     }
 }
