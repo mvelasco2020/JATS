@@ -11,9 +11,12 @@ using JATS.Extensions;
 using JATS.Models.ViewModel;
 using JATS.Services.Interfaces;
 using JATS.Models.Enums;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JATS.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,25 +24,60 @@ namespace JATS.Controllers
         private readonly ILookupService _lookupService;
         private readonly IFileService _fileService;
         private readonly IProjectService _projectService;
+        private readonly UserManager<JTUser> _userManager;
+        private readonly ICompanyInfoService _compandyInfoService;
 
         public ProjectsController(ApplicationDbContext context,
                                     IRolesService rolesService,
                                     ILookupService lookupService,
                                     IFileService fileService,
-                                    IProjectService projectService)
+                                    IProjectService projectService,
+                                    UserManager<JTUser> userManager,
+                                    ICompanyInfoService compandyInfoService)
         {
             _context = context;
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
             _projectService = projectService;
+            _userManager = userManager;
+            _compandyInfoService = compandyInfoService;
         }
 
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
-            return View(await applicationDbContext.ToListAsync());
+            List<Project> projects = new();
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            //Rreturns all projects that are not archived
+            projects = await _projectService.GetAllProjectsByCompany(companyId);
+
+
+
+            return View(projects);
+        }
+
+        public async Task<IActionResult> MyProjects()
+        {
+            List<Project> projects = await _projectService
+                .GetUserProjectsAsync(_userManager.GetUserId(User));
+
+            return View(projects);
+        }
+
+        [Authorize(Roles = "Admin,ProjectManager")]
+        public async Task<IActionResult> ArchivedProjects()
+        {
+            List<Project> projects = new();
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            //Rreturns all projects that are not archived
+            projects = await _projectService.GetAllArchivedProjectsByCompany(companyId);
+
+
+
+            return View(projects);
         }
 
         // GET: Projects/Details/5
@@ -63,6 +101,7 @@ namespace JATS.Controllers
         }
 
         // GET: Projects/Create
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> Create()
         {
             int companyId = User.Identity.GetCompanyId().Value;

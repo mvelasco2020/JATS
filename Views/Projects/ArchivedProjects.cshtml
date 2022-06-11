@@ -51,10 +51,7 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-            @if (User.IsInRole(Roles.Admin.ToString()) ||
-            (await ProjectService.GetProjectManagerAsync(item.Id))?.Id == UserManager.GetUserId(User)
-             )
-            {
+
                         
         <tr>
             <td>
@@ -72,7 +69,7 @@
 
 
             <td>
-                            @if (item.ImageFileData != null)
+                @if (item.ImageFileData != null)
                         {
                             
                         <img
@@ -89,56 +86,17 @@
                 @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+
+                @if (User.IsInRole(Roles.Admin.ToString()) || 
+               (await ProjectService.GetProjectManagerAsync(item.Id))?.Id == UserManager.GetUserId(User))
+                {
+                    
+                <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+                }
             </td>
         </tr>
-            }
-        
-            else 
-    {
-        
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-
-
-            <td>
-                            @if (item.ImageFileData != null)
-                        {
-                            
-                        <img
-                    class="img-fluid img-thumbnail"
-                    style="width:100px;height:80px"
-                    src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))"
-                    />        
-                        }
-           
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Id)
-            </td>
-                        <td>
-                @Html.DisplayFor(modelItem => item.Archived)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-            </td>
-        </tr>
-            }
+      
 
         }
     </tbody>

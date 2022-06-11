@@ -45,10 +45,7 @@ namespace JATS.Services
 
             try
             {
-                bool result = await _roleService.AddUserToRole(await _context
-                      .Users
-                      .FirstOrDefaultAsync(u => u.Id == userId),
-                      Roles.ProjectManager.ToString());
+                bool result = await AddUserToProjectAsync(userId, projectId);
                 return result;
             }
             catch (Exception ex)
@@ -157,6 +154,35 @@ namespace JATS.Services
             return projects;
         }
 
+        public async Task<List<Project>> GetAllArchivedProjectsByCompany(int companyId)
+        {
+            List<Project> projects = await _context
+                .Projects
+                .Where(p => p.CompanyId == companyId && p.Archived == true)
+                .Include(p => p.Members)
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.Comments)
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.Attachments)
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.History)
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.TechnicianUser)
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.OwnerUser)
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.Notifications)
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.TicketStatus)
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.TicketPriority)
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.TicketType)
+                .Include(p => p.ProjectPriority)
+                .ToListAsync();
+            return projects;
+        }
+
         public async Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName)
         {
             List<Project> projects = await GetAllProjectsByCompany(companyId);
@@ -165,12 +191,6 @@ namespace JATS.Services
             return projects.Where(p => p.ProjectPriorityId == priorityId).ToList();
         }
 
-        public async Task<List<Project>> GetArchivedProjectsByCompany(int companyId)
-        {
-
-            List<Project> projects = await GetAllProjectsByCompany(companyId);
-            return projects.Where(p => p.Archived == true).ToList();
-        }
 
         public async Task<List<JTUser>> GetTechniciansOnProjectAsync(int projectId)
         {

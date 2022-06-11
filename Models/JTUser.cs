@@ -33,7 +33,7 @@ namespace JATS.Models
         public string? AvatarFileContentType { get; set; }
 
 
-        public int? CompanyId { get; set; }
+        public int CompanyId { get; set; }
 
         //Nav Props
         public virtual Company Company { get; set; }
