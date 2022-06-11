@@ -19,9 +19,11 @@ namespace JATS.Models
 
 
         [DisplayName("Start Date")]
+        [DataType(DataType.Date)]
         public DateTimeOffset StartDate { get; set; }
 
         [DisplayName("End Date")]
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
         public bool Archived { get; set; }
@@ -29,7 +31,7 @@ namespace JATS.Models
         //Image
         [NotMapped]
         [DataType(DataType.Upload)]
-        public IFormFile ImageFormFile { get; set; }
+        public IFormFile? ImageFormFile { get; set; }
 
         [DisplayName("File Name")]
         public string? ImageFileName { get; set; }

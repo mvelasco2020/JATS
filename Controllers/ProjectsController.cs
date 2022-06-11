@@ -19,14 +19,20 @@ namespace JATS.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IRolesService _rolesService;
         private readonly ILookupService _lookupService;
+        private readonly IFileService _fileService;
+        private readonly IProjectService _projectService;
 
         public ProjectsController(ApplicationDbContext context,
                                     IRolesService rolesService,
-                                    ILookupService lookupService)
+                                    ILookupService lookupService,
+                                    IFileService fileService,
+                                    IProjectService projectService)
         {
             _context = context;
             _rolesService = rolesService;
             _lookupService = lookupService;
+            _fileService = fileService;
+            _projectService = projectService;
         }
 
         // GET: Projects
@@ -80,17 +86,46 @@ namespace JATS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,StartDate,EndDate,Archived,ImageFileName,ImageFileData,FileContentType,CompanyId,ProjectPriorityId")] Project project)
+        public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
-            if (ModelState.IsValid)
+
+            if (model is not null)
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                int companyId = User.Identity.GetCompanyId().Value;
+                try
+                {
+                    if (model.Project.ImageFormFile is not null)
+                    {
+                        model.Project.ImageFileData = await _fileService
+                            .ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+
+                        model.Project.ImageFileName = model.Project.ImageFormFile.FileName;
+                        model.Project.FileContentType = model.Project.ImageFormFile.ContentType;
+                    }
+
+                    model.Project.CompanyId = companyId;
+
+                    //Entity Framework will track this change
+                    //and give return the object with am Id
+                    await _projectService.AddNewProjectAsync(model.Project);
+
+
+                    if (!string.IsNullOrEmpty(model.PMid))
+                    {
+                        //project.id is availble bec of the code above
+                        await _projectService.AddProjectManagerAsync(model.PMid, model.Project.Id);
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+                return RedirectToAction("Index");
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", project.ProjectPriorityId);
-            return View(project);
+
+            return RedirectToAction("Create");
         }
 
         // GET: Projects/Edit/5
