@@ -24,7 +24,7 @@ namespace JATS.Models
 
         [DisplayName("End Date")]
         [DataType(DataType.Date)]
-        public DateTime EndDate { get; set; }
+        public DateTimeOffset EndDate { get; set; }
 
         public bool Archived { get; set; }
 

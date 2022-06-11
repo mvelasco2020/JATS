@@ -83,19 +83,14 @@ namespace JATS.Controllers
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Projects == null)
-            {
+            if (id == null)
                 return NotFound();
-            }
 
-            var project = await _context.Projects
-                .Include(p => p.Company)
-                .Include(p => p.ProjectPriority)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var project = await _projectService
+                    .GetProjectByIdAsync(id.Value, User.Identity.GetCompanyId().Value);
+
             if (project == null)
-            {
                 return NotFound();
-            }
 
             return View(project);
         }

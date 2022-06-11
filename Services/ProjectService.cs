@@ -202,6 +202,13 @@ namespace JATS.Services
             Project project = await _context
                 .Projects
                 .Include(p => p.Tickets)
+                .ThenInclude(t => t.TicketPriority)
+                .Include(p => p.Tickets)
+                .ThenInclude(t => t.TicketType)
+                .Include(p => p.Tickets)
+                .ThenInclude(t => t.TechnicianUser)
+                .Include(p => p.Tickets)
+                .ThenInclude(t => t.OwnerUser)
                 .Include(p => p.Members)
                 .Include(p => p.ProjectPriority)
                 .FirstOrDefaultAsync(p => p.CompanyId == companyId && p.Id == projectId);
