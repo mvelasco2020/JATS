@@ -24,18 +24,21 @@ namespace JATS.Controllers
         private readonly IProjectService _projectService;
         private readonly ITicketService _ticketService;
         private readonly ILookupService _lookupService;
+        private readonly IFileService _fileService;
 
         public TicketsController(ApplicationDbContext context,
                                 UserManager<JTUser> userManager,
                                 IProjectService projectService,
                                 ITicketService ticketService,
-                                ILookupService lookupService)
+                                ILookupService lookupService,
+                                IFileService fileService)
         {
             _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _ticketService = ticketService;
             _lookupService = lookupService;
+            _fileService = fileService;
         }
 
         // GET: Tickets
@@ -266,11 +269,46 @@ namespace JATS.Controllers
 
             return RedirectToAction("Details", new { id = ticketComment.TicketId });
         }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
+        {
+            string statusMessage;
+
+            if (ModelState.IsValid && ticketAttachment.FormFile != null)
+            {
+                ticketAttachment.Data = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+                ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
+
+                ticketAttachment.Created = DateTimeOffset.Now;
+                ticketAttachment.UserId = _userManager.GetUserId(User);
+
+                await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+                statusMessage = "Success: New attachment added to Ticket.";
+            }
+            else
+            {
+                statusMessage = "Error: Invalid data.";
+
+            }
+
+            return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
+        }
+
+        //local private methods//
         private async Task<bool> TicketExists(int id)
         {
             int companyId = User.Identity.GetCompanyId().Value;
 
             return (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).Any(t => t.Id == id);
         }
+
+
+
+
     }
 }
