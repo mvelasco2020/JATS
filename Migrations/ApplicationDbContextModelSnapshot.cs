@@ -40,7 +40,7 @@ namespace JATS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies", (string)null);
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("JATS.Models.Invite", b =>
@@ -99,7 +99,7 @@ namespace JATS.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Invites", (string)null);
+                    b.ToTable("Invites");
                 });
 
             modelBuilder.Entity("JATS.Models.JTUser", b =>
@@ -229,7 +229,7 @@ namespace JATS.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("JATS.Models.Project", b =>
@@ -250,7 +250,7 @@ namespace JATS.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTimeOffset>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FileContentType")
@@ -279,7 +279,7 @@ namespace JATS.Migrations
 
                     b.HasIndex("ProjectPriorityId");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("JATS.Models.ProjectPriority", b =>
@@ -296,7 +296,7 @@ namespace JATS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProjectPriorities", (string)null);
+                    b.ToTable("ProjectPriorities");
                 });
 
             modelBuilder.Entity("JATS.Models.Ticket", b =>
@@ -360,7 +360,7 @@ namespace JATS.Migrations
 
                     b.HasIndex("TicketTypeId");
 
-                    b.ToTable("Tickets", (string)null);
+                    b.ToTable("Tickets");
                 });
 
             modelBuilder.Entity("JATS.Models.TicketAttachment", b =>
@@ -403,7 +403,7 @@ namespace JATS.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TicketAttachments", (string)null);
+                    b.ToTable("TicketAttachments");
                 });
 
             modelBuilder.Entity("JATS.Models.TicketComment", b =>
@@ -434,7 +434,7 @@ namespace JATS.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TicketComments", (string)null);
+                    b.ToTable("TicketComments");
                 });
 
             modelBuilder.Entity("JATS.Models.TicketHistory", b =>
@@ -477,7 +477,7 @@ namespace JATS.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TicketHistories", (string)null);
+                    b.ToTable("TicketHistories");
                 });
 
             modelBuilder.Entity("JATS.Models.TicketPriority", b =>
@@ -494,7 +494,7 @@ namespace JATS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketPriorities", (string)null);
+                    b.ToTable("TicketPriorities");
                 });
 
             modelBuilder.Entity("JATS.Models.TicketStatus", b =>
@@ -511,7 +511,7 @@ namespace JATS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketStatuses", (string)null);
+                    b.ToTable("TicketStatuses");
                 });
 
             modelBuilder.Entity("JATS.Models.TicketType", b =>
@@ -528,7 +528,7 @@ namespace JATS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketTypes", (string)null);
+                    b.ToTable("TicketTypes");
                 });
 
             modelBuilder.Entity("JTUserProject", b =>
@@ -543,7 +543,7 @@ namespace JATS.Migrations
 
                     b.HasIndex("ProjectsId");
 
-                    b.ToTable("JTUserProject", (string)null);
+                    b.ToTable("JTUserProject");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
