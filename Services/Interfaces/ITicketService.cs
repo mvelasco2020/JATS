@@ -26,5 +26,6 @@ namespace JATS.Services.Interfaces
         public Task<int?> LookupTicketTypeIdAsync(string ticketName);
         public Task<int?> LookupTicketPriorityIdAsync(string priorityName);
         public Task<int?> LookupTicketStatusIdAsync(string statusName);
+        public Task AddTicketCommentAsync(TicketComment ticketComment);
     }
 }

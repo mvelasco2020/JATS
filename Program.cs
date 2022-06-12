@@ -18,8 +18,7 @@ builder.Services.AddIdentity<JTUser, IdentityRole>(options => options.SignIn.Req
     .AddClaimsPrincipalFactory<JTUserClaimsPrincipalFactory>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
-builder.Services.AddControllersWithViews();
-
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 //Database
 // Add services to the container.
