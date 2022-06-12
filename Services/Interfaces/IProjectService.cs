@@ -26,6 +26,7 @@ namespace JATS.Services.Interfaces
 
         public Task<JTUser> GetProjectManagerAsync(int projectId);
 
+        public Task<bool> IsAssignedProjectManager(string userId, int projectId);
         public Task<List<JTUser>> GetProjectMembersByRoleAsync(int projectId, string role);
 
         public Task<Project> GetProjectByIdAsync(int projectId, int companyId);

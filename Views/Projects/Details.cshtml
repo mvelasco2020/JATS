@@ -258,15 +258,9 @@
 
               }
           </td>
-          @if (ticket.TicketStatus.Name == "New")
-          {
+  
               <td><span class="">@ticket.TicketStatus.Name </span></td>
-
-          }
-          else
-          {
-              <td><span class="">@ticket.TicketStatus.Name </span></td>
-          }
+          
           <td><span class="">@ticket.TicketPriority.Name </span></td>
           <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
           <td>

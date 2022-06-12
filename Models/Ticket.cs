@@ -52,24 +52,24 @@ namespace JATS.Models
         public string? TechnicianUserId { get; set; }
 
         //Nav Props
-        public virtual Project Project { get; set; }
+        public virtual Project? Project { get; set; }
 
-        public virtual TicketType TicketType { get; set; }
+        public virtual TicketType? TicketType { get; set; }
 
-        public virtual TicketPriority TicketPriority { get; set; }
+        public virtual TicketPriority? TicketPriority { get; set; }
 
-        public virtual TicketStatus TicketStatus { get; set; }
+        public virtual TicketStatus? TicketStatus { get; set; }
 
-        public virtual JTUser OwnerUser { get; set; }
-        public virtual JTUser TechnicianUser { get; set; }
+        public virtual JTUser? OwnerUser { get; set; }
+        public virtual JTUser? TechnicianUser { get; set; }
 
-        public virtual ICollection<TicketComment> Comments { get; set; }
+        public virtual ICollection<TicketComment>? Comments { get; set; }
 
-        public virtual ICollection<TicketAttachment> Attachments { get; set; }
+        public virtual ICollection<TicketAttachment>? Attachments { get; set; }
 
-        public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<Notification>? Notifications { get; set; }
 
-        public virtual ICollection<TicketHistory> History { get; set; }
+        public virtual ICollection<TicketHistory>? History { get; set; }
 
 
 

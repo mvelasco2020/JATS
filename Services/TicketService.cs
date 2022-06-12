@@ -284,6 +284,15 @@ namespace JATS.Services
         {
             return await _context
                 .Tickets
+                .Include(t => t.TechnicianUser)
+                .Include(t => t.OwnerUser)
+                .Include(t => t.Project)
+                .Include(t => t.TicketPriority)
+                .Include(t => t.TicketStatus)
+                .Include(t => t.TicketType)
+                .Include(t => t.Comments)
+                .Include(t => t.History)
+                .Include(t => t.Attachments)
                 .FirstOrDefaultAsync(t => t.Id == ticketId);
         }
 

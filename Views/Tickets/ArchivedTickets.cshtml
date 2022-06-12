@@ -7,15 +7,13 @@
 @inject IProjectService ProjectService
 
 @{
-    ViewData["Title"] = "All Tickets";
+    ViewData["Title"] = "All Archived Tickets";
     JTUser user = await UserManager.GetUserAsync(User);
 }
 
-<h1>Index</h1>
+<h1>Archived Tickets</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
 <table class="table">
     <thead>
         <tr>
@@ -86,10 +84,10 @@
                 @Html.DisplayFor(modelItem => item.TicketStatus.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OwnerUser.FullName)
+                @Html.DisplayFor(modelItem => item.OwnerUser.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TechnicianUser.FullName)
+                @Html.DisplayFor(modelItem => item.TechnicianUser.Id)
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
@@ -99,17 +97,11 @@
                 item.OwnerUserId == user.Id ||
                    (await ProjectService.IsAssignedProjectManager(user.Id, item.ProjectId))) 
                     {
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
 
 
-                @if (item.Archived == true)
-                {
-                    <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
-                }
-                        else
-                        {
-                            <a asp-action="ArchiveTicket" asp-route-id="@item.Id">Archive</a>
-                        }
+                    <a asp-action="RestoreTicket" asp-route-id="@item.Id">Restore</a>
+                
+        
 
                 }
             </td>

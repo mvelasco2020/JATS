@@ -206,6 +206,8 @@ namespace JATS.Services
                 .Include(p => p.Tickets)
                 .ThenInclude(t => t.TicketType)
                 .Include(p => p.Tickets)
+                .ThenInclude(t => t.TicketStatus)
+                .Include(p => p.Tickets)
                 .ThenInclude(t => t.TechnicianUser)
                 .Include(p => p.Tickets)
                 .ThenInclude(t => t.OwnerUser)
@@ -447,6 +449,24 @@ namespace JATS.Services
                     _context.Update(ticket);
                     await _context.SaveChangesAsync();
                 }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> IsAssignedProjectManager(string userId, int projectId)
+        {
+            try
+            {
+                string projectManagerId = (await GetProjectManagerAsync(projectId))?.Id;
+                if (userId == projectManagerId)
+                {
+                    return true;
+                }
+                else return false;
             }
             catch (Exception)
             {
