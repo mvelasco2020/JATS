@@ -13,6 +13,7 @@ using JATS.Services.Interfaces;
 using JATS.Models.Enums;
 using System.Collections;
 using Microsoft.AspNetCore.Authorization;
+using JATS.Models.ViewModel;
 
 namespace JATS.Controllers
 {
@@ -242,6 +243,44 @@ namespace JATS.Controllers
                 return View(pmTickets.Where(t => t.Archived == false));
             }
 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AssignTechnician(int ticketId)
+        {
+            AssignTechnicianViewModel model = new();
+            model.Ticket = await _ticketService.GetTicketByIdAsync(ticketId);
+
+            if (model.Ticket.isPrimordial == true)
+            {
+                List<JTUser> users = _context
+                    .Users.Where(u => u.CompanyId == User.Identity.GetCompanyId().Value).ToList();
+                model.Technicians = new SelectList(users, "Id", "FullName");
+
+            }
+            else
+            {
+                model.Technicians = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(Roles.Technician)), "Id", "FullName");
+            }
+
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignTechnician(AssignTechnicianViewModel viewModel)
+        {
+
+            if (viewModel.TechnicianId != null)
+            {
+                await _ticketService.AssignTicketAsync(viewModel.Ticket.Id, viewModel.TechnicianId);
+            }
+
+
+            return RedirectToAction(nameof(AssignTechnician), new { id = viewModel.Ticket.Id });
         }
 
 

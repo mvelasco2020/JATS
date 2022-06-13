@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace JATS.Models
@@ -16,6 +17,8 @@ namespace JATS.Models
         public string Description { get; set; }
 
 
+        [ValidateNever]
+        public bool isPrimordial { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayName("Created")]

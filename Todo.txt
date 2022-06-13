@@ -1,0 +1,1 @@
+﻿set isarhivable to false when creating default projects on seeding and new company

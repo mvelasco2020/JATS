@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,6 +29,8 @@ namespace JATS.Models
 
         public bool Archived { get; set; }
 
+        [ValidateNever]
+        public bool isPrimordial { get; set; }
         //Image
         [NotMapped]
         [DataType(DataType.Upload)]
