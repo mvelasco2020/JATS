@@ -125,7 +125,7 @@
                                     {
                                         
                                         <a class="btn btn-xs btn-outline-info"
-                                        asp-action="AssignProjectManager"
+                                        asp-action="AssignPm"
                                         asp-controller="Projects"
                                         asp-route-id="@Model.Id"
                                         >
@@ -253,7 +253,7 @@
               {
                   if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                   {
-                      <a class="btn btn-xs btn-info" asp-action="AssignTechnician" asp-controller="Home" asp-route-ticketId="@ticket.Id">Assign Technician</a>
+                      <a class="btn btn-xs btn-info" asp-action="AssignTechnician" asp-controller="Tickets" asp-route-ticketId="@ticket.Id">Assign Technician</a>
                   }
 
               }

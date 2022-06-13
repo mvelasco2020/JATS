@@ -291,6 +291,7 @@ namespace JATS.Services
                 .Include(t => t.TicketStatus)
                 .Include(t => t.TicketType)
                 .Include(t => t.Comments)
+                .ThenInclude(c => c.User)
                 .Include(t => t.History)
                 .Include(t => t.Attachments)
                 .FirstOrDefaultAsync(t => t.Id == ticketId);

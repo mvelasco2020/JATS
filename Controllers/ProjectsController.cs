@@ -228,6 +228,39 @@ namespace JATS.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin,ProjectManager")]
+        public async Task<IActionResult> AssignPM(int id)
+        {
+            AssignPMViewModel viewModel = new AssignPMViewModel();
+            viewModel.Project = await _projectService.GetProjectByIdAsync(id, User.Identity.GetCompanyId().Value);
+            viewModel.PMList = new SelectList((await _rolesService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), User.Identity.GetCompanyId().Value)), "Id", "FullName");
+            return View(viewModel);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,ProjectManager")]
+        public async Task<IActionResult> AssignPM(AssignPMViewModel viewModel)
+        {
+            if (!string.IsNullOrEmpty(viewModel.PMid))
+            {
+                await _projectService.AddProjectManagerAsync(viewModel.PMid, viewModel.Project.Id);
+                return RedirectToAction(nameof(Details), new { id = viewModel.Project.Id });
+            }
+            return View(viewModel.Project.Id);
+
+        }
+
+
+        public async Task<IActionResult> UnassignedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+            return View(await _projectService.GetUnassignedProjectsAsync(companyId));
+        }
+
+
         // GET: Projects/Delete/5
         public async Task<IActionResult> Archive(int? id)
         {

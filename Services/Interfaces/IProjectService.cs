@@ -48,5 +48,6 @@ namespace JATS.Services.Interfaces
         public Task RemoveUserFromProjectAsync(string userId, int projectId);
 
         public Task UpdateProjectAsync(Project project);
+        public Task<List<Project>> GetUnassignedProjectsAsync(int companyId);
     }
 }

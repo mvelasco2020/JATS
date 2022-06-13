@@ -474,5 +474,34 @@ namespace JATS.Services
                 throw;
             }
         }
+
+        public async Task<List<Project>> GetUnassignedProjectsAsync(int companyId)
+        {
+            List<Project> result = new();
+            try
+            {
+
+                var projects = await _context
+                    .Projects.Include(p => p.ProjectPriority)
+                    .Where(p => p.CompanyId == companyId)
+                    .Where(p => p.Archived == false)
+                    .ToListAsync();
+
+                foreach (var project in projects)
+                {
+                    if ((await GetProjectMembersByRoleAsync(project.Id, nameof(Roles.ProjectManager))).Count == 0)
+                    {
+                        result.Add(project);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return result;
+        }
     }
 }

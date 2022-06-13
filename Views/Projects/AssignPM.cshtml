@@ -1,0 +1,28 @@
+﻿@using JATS.Models.ViewModel
+@model AssignPMViewModel
+
+@{
+    ViewData["Title"] = "Assign PM";
+}
+
+<h1>Project: @Model.Project.Name</h1>
+<h4>Assign PM</h4>
+
+<div class="row">
+
+    <div class="col-md-4">
+        <form method="post" asp-action="AssignPM" asp-controller="Projects">
+            <input type="hidden" asp-for="Project.Id" />
+            <p>@Model.Project.Name</p>
+
+            <p>@Model.Project.Description</p>
+            <label class="form-label">Select Project Manager</label>
+            <select asp-for="PMid" asp-items="@Model.PMList">
+                <option></option>
+
+            </select>
+            <input type="submit" value="Assign PM" class="btn btn-primary" />
+        </form>
+    </div>
+</div>
+<a asp-action="UnassignedProjects" asp-route-companyId="@Model.Project.Id"></a>
