@@ -503,5 +503,19 @@ namespace JATS.Services
             }
         }
 
+        public async Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId)
+        {
+            try
+            {
+                return (await GetAllTicketsByCompanyAsync(companyId))
+                            .Where(t => string.IsNullOrEmpty(t.TechnicianUserId))
+                            .ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

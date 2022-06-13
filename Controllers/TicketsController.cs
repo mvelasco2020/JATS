@@ -222,6 +222,29 @@ namespace JATS.Controllers
         }
 
 
+        [Authorize(Roles = "Admin,ProjectManager")]
+        public async Task<IActionResult> UnassignedTickets()
+        {
+
+            var unAssigneddTickets = await _ticketService.GetUnassignedTicketsAsync(User.Identity.GetCompanyId().Value);
+            if (User.IsInRole(nameof(Roles.Admin)))
+            {
+                return View(unAssigneddTickets.Where(t => t.Archived == false));
+            }
+            else
+            {
+                List<Ticket> pmTickets = new();
+                foreach (var item in unAssigneddTickets)
+                {
+                    if (await _projectService.IsAssignedProjectManager(_userManager.GetUserId(User), item.ProjectId))
+                        pmTickets.Add(item);
+                }
+                return View(pmTickets.Where(t => t.Archived == false));
+            }
+
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> RestoreTicket(int? id)
         {

@@ -31,6 +31,7 @@ namespace JATS.Services.Interfaces
         public Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment);
 
         public Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
+        public Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId);
 
     }
 }
