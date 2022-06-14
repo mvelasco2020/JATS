@@ -66,6 +66,7 @@ namespace JATS.Controllers
             return View(projects);
         }
 
+
         [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> ArchivedProjects()
         {
@@ -79,6 +80,7 @@ namespace JATS.Controllers
 
             return View(projects);
         }
+
 
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -94,6 +96,7 @@ namespace JATS.Controllers
 
             return View(project);
         }
+
 
         // GET: Projects/Create
         [Authorize(Roles = "Admin,ProjectManager")]
@@ -114,6 +117,7 @@ namespace JATS.Controllers
                 , "Name");
             return View(model);
         }
+
 
         // POST: Projects/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -254,6 +258,44 @@ namespace JATS.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> AssignMembers(int id)
+        {
+            ProjectMembersViewModel model = new();
+            int companyId = User.Identity.GetCompanyId().Value;
+            model.Project = await _projectService.GetProjectByIdAsync(id, companyId);
+            List<JTUser> technicians = await _rolesService.GetUsersInRoleAsync(nameof(Roles.Technician), companyId);
+            List<JTUser> submitters = await _rolesService.GetUsersInRoleAsync(nameof(Roles.Submitter), companyId);
+            List<JTUser> companyUsers = technicians.Concat(submitters).ToList();
+            List<string> projectMembers = model.Project.Members.Select(m => m.Id).ToList();
+            model.Users = new MultiSelectList(companyUsers, "Id", "FullName", projectMembers);
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
+        {
+            if (model.SelectedUsers is not null)
+            {
+                List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id)).Select(m => m.Id).ToList();
+                foreach (var member in memberIds)
+                {
+                    await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
+                }
+                foreach (var user in model.SelectedUsers)
+                {
+                    await _projectService.AddUserToProjectAsync(user, model.Project.Id);
+                }
+
+                return RedirectToAction("Details", new { id = model.Project.Id });
+            }
+            return View(new { id = model.Project.Id });
+        }
+
+
         public async Task<IActionResult> UnassignedProjects()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -276,6 +318,7 @@ namespace JATS.Controllers
 
             return View(project);
         }
+
 
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Archive")]
