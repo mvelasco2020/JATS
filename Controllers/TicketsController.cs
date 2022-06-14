@@ -353,6 +353,8 @@ namespace JATS.Controllers
                     ticketComment.UserId = _userManager.GetUserId(User);
                     ticketComment.Created = DateTimeOffset.Now;
                     await _ticketService.AddTicketCommentAsync(ticketComment);
+
+                    await _historyService.AddHistoryAsync(ticketComment.TicketId, nameof(TicketComment), ticketComment.UserId);
                 }
                 catch (Exception)
                 {

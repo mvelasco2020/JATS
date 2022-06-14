@@ -54,7 +54,7 @@ namespace JATS.Services
 
         public string GetGileIcon(string file)
         {
-            string fileImage = "default";
+            string fileImage = "/img/contenttype/default.png";
 
             if (!string.IsNullOrEmpty(file))
             {
