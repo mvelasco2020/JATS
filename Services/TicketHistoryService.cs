@@ -138,6 +138,35 @@ namespace JATS.Services
             }
         }
 
+        public async Task AddHistoryAsync(int ticketId, string model, string userId)
+        {
+            try
+            {
+                Ticket ticket = await _context.Tickets.FindAsync(ticketId);
+                string description = model.ToLower().Replace("Ticket", "");
+                description = $"New {description} add to ticket: {ticket.Title}";
+
+                TicketHistory history = new()
+                {
+                    TicketId = ticket.Id,
+                    Property = model,
+                    UserId = userId,
+                    OldValue = "",
+                    NewValue = "",
+                    Created = DateTimeOffset.Now,
+                    Description = description
+                };
+
+                await _context.TicketHistories.AddAsync(history);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int companyId)
         {
             try

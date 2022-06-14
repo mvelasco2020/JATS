@@ -26,13 +26,15 @@ namespace JATS.Controllers
         private readonly ITicketService _ticketService;
         private readonly ILookupService _lookupService;
         private readonly IFileService _fileService;
+        private readonly ITicketHistoryService _historyService;
 
         public TicketsController(ApplicationDbContext context,
                                 UserManager<JTUser> userManager,
                                 IProjectService projectService,
                                 ITicketService ticketService,
                                 ILookupService lookupService,
-                                IFileService fileService)
+                                IFileService fileService,
+                                ITicketHistoryService historyService)
         {
             _context = context;
             _userManager = userManager;
@@ -40,6 +42,7 @@ namespace JATS.Controllers
             _ticketService = ticketService;
             _lookupService = lookupService;
             _fileService = fileService;
+            _historyService = historyService;
         }
 
         // GET: Tickets
@@ -110,8 +113,19 @@ namespace JATS.Controllers
             ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(TicketStatusEnum.New))).Value;
             if (ModelState.IsValid)
             {
-                await _ticketService.AddNewTicketAsync(ticket);
-                //Todo : ticket history
+                try
+                {
+                    await _ticketService.AddNewTicketAsync(ticket);
+                    //Todo : ticket history
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                    await _historyService.AddHistoryAsync(null, newTicket, user.Id);
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
                 //Todo : ticket notification
                 return RedirectToAction(nameof(Index));
             }
@@ -164,6 +178,7 @@ namespace JATS.Controllers
             if (ModelState.IsValid)
             {
                 JTUser user = await _userManager.GetUserAsync(User);
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                 try
                 {
                     ticket.Updated = DateTimeOffset.Now;
@@ -181,6 +196,8 @@ namespace JATS.Controllers
                     }
                 }
                 //Todo add history
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -276,7 +293,22 @@ namespace JATS.Controllers
 
             if (viewModel.TechnicianId != null)
             {
-                await _ticketService.AssignTicketAsync(viewModel.Ticket.Id, viewModel.TechnicianId);
+                JTUser user = await _userManager.GetUserAsync(User);
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(viewModel.Ticket.Id);
+                try
+                {
+                    await _ticketService.AssignTicketAsync(viewModel.Ticket.Id, viewModel.TechnicianId);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(viewModel.Ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
+
+                return RedirectToAction(nameof(Details), new { id = viewModel.Ticket.Id });
             }
 
 

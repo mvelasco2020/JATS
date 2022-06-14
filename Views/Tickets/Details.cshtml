@@ -276,12 +276,16 @@
                                     <span class="date">@history.Created.ToString("dd MMM yyyy")</span>
                                     <h6>@history.Description</h6>
                                     <span>By: <a href="" title="@history.User.FullName">@history.User.FullName</a></span>
-                                    <div>
-                                        <p>the ticket <b>@history.Property</b> was edited</p>
-                                        <p>@($"Previous {history.Property}: {history.OldValue}")</p>
-                                        <p>@($"Current {history.Property}: {history.NewValue}")</p>
+                                    @if (!history.Description.Contains("New ticket created"))
+                                    {
 
-                                    </div>
+                                        <div>
+                                            <p>the ticket <b>@history.Property</b> was edited</p>
+                                            <p>@($"Previous {history.Property}: {history.OldValue}")</p>
+                                            <p>@($"Current {history.Property}: {history.NewValue}")</p>
+
+                                        </div>
+                                    }
 
                                 </div>
                             }

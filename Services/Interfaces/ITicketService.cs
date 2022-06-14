@@ -10,6 +10,8 @@ namespace JATS.Services.Interfaces
         public Task ArchiveTicketAsync(Ticket ticket);
 
         public Task AssignTicketAsync(int ticketId, string userId);
+
+        public Task<Ticket> GetTicketAsNoTrackingAsync(int ticketId);
         public Task<List<Ticket>> GetArchivedTicketsAsync(int companyId);
         public Task<List<Ticket>> GetAllTicketsByCompanyAsync(int companyId);
         public Task<List<Ticket>> GetAllTicketsByPriorityAsync(int companyId, string priorityName);
@@ -32,6 +34,8 @@ namespace JATS.Services.Interfaces
 
         public Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
         public Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId);
+
+
 
     }
 }
