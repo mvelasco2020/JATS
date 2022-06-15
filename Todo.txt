@@ -1,2 +1,9 @@
 ﻿seed technicians
+
+add constraint to who can edit the project.the owner or admin/PM should only be the one that can edit the project, 
+anyone should be able to create a project
+
+code user roles.
+
+
 set isArhivable to false when creating default projects on seeding and new company

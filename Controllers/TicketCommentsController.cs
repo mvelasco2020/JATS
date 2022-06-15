@@ -1,4 +1,11 @@
-﻿using System;
+﻿
+
+
+
+
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -161,14 +168,14 @@ namespace JATS.Controllers
             {
                 _context.TicketComments.Remove(ticketComment);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TicketCommentExists(int id)
         {
-          return (_context.TicketComments?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.TicketComments?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

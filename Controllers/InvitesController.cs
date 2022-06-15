@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JATS.Data;
 using JATS.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JATS.Controllers
 {
+    [Authorize]
     public class InvitesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -173,14 +175,14 @@ namespace JATS.Controllers
             {
                 _context.Invites.Remove(invite);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool InviteExists(int id)
         {
-          return (_context.Invites?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Invites?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

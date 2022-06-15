@@ -50,7 +50,6 @@ namespace JATS.Controllers
         {
             List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(User.Identity.GetCompanyId().Value);
 
-            // var tickets = await _context.Tickets.ToListAsync();
             return View(tickets.Where(t => t.Archived == false));
         }
 
@@ -146,7 +145,7 @@ namespace JATS.Controllers
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Tickets == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -217,6 +216,7 @@ namespace JATS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize("Admin,ProjectManager")]
         public async Task<IActionResult> ArchiveTicket(int id)
         {
 
@@ -227,6 +227,8 @@ namespace JATS.Controllers
         }
 
         [HttpGet]
+        [Authorize("Admin,ProjectManager")]
+
         public async Task<IActionResult> ArchiveTicket(int? id)
         {
 
@@ -317,6 +319,8 @@ namespace JATS.Controllers
 
 
         [HttpGet]
+        [Authorize("Admin,ProjectManager")]
+
         public async Task<IActionResult> RestoreTicket(int? id)
         {
             var ticket = await _ticketService.GetTicketByIdAsync(id.Value);
@@ -329,6 +333,8 @@ namespace JATS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize("Admin,ProjectManager")]
+
         public async Task<IActionResult> RestoreTicket(int id)
         {
             var ticket = await _ticketService.GetTicketByIdAsync(id);

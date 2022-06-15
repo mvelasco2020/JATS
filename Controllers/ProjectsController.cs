@@ -19,7 +19,7 @@ namespace JATS.Controllers
     [Authorize]
     public class ProjectsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+
         private readonly IRolesService _rolesService;
         private readonly ILookupService _lookupService;
         private readonly IFileService _fileService;
@@ -27,7 +27,7 @@ namespace JATS.Controllers
         private readonly UserManager<JTUser> _userManager;
         private readonly ICompanyInfoService _compandyInfoService;
 
-        public ProjectsController(ApplicationDbContext context,
+        public ProjectsController(
                                     IRolesService rolesService,
                                     ILookupService lookupService,
                                     IFileService fileService,
@@ -35,7 +35,7 @@ namespace JATS.Controllers
                                     UserManager<JTUser> userManager,
                                     ICompanyInfoService compandyInfoService)
         {
-            _context = context;
+
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
@@ -259,6 +259,7 @@ namespace JATS.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> AssignMembers(int id)
         {
             ProjectMembersViewModel model = new();
@@ -275,7 +276,7 @@ namespace JATS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
         {
             if (model.SelectedUsers is not null)
@@ -304,9 +305,11 @@ namespace JATS.Controllers
 
 
         // GET: Projects/Delete/5
+
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> Archive(int? id)
         {
-            if (id == null || _context.Projects == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -323,6 +326,8 @@ namespace JATS.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,ProjectManager")]
+
         public async Task<IActionResult> ArchiveConfirmed(int id)
         {
 
@@ -332,10 +337,10 @@ namespace JATS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> Restore(int? id)
         {
-            if (id == null || _context.Projects == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -351,6 +356,7 @@ namespace JATS.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> RestoreConfirmed(int id)
         {
 
@@ -359,9 +365,6 @@ namespace JATS.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        private bool ProjectExists(int id)
-        {
-            return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+
     }
 }

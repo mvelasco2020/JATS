@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JATS.Data;
 using JATS.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JATS.Controllers
 {
+    [Authorize]
     public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
