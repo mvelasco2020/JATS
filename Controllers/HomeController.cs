@@ -2,6 +2,7 @@
 using JATS.Models;
 using JATS.Models.ViewModel;
 using JATS.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -29,6 +30,7 @@ namespace JATS.Controllers
         }
 
 
+        [Authorize]
         public async Task<IActionResult> Dashboard()
         {
             DashboardViewModel model = new DashboardViewModel();
