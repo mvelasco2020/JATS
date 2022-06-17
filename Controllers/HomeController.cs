@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 namespace JATS.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -30,7 +31,6 @@ namespace JATS.Controllers
         }
 
 
-        [Authorize]
         public async Task<IActionResult> Dashboard()
         {
             DashboardViewModel model = new DashboardViewModel();

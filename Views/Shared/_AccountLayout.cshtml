@@ -1,0 +1,499 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<JTUser> SignInManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="https://demos.creative-tim.com/soft-ui-dashboard-pro/assets/img/apple-icon.png">
+    <title>@ViewData["Title"] - JATS</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    @*Original stuff to be deleted
+    <title>@ViewData["Title"] - JATS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/JATS.styles.css" asp-append-version="true" />
+    *@
+
+
+    <link rel="apple-touch-icon"
+          sizes="76x76"
+          href="https://demos.creative-tim.com/soft-ui-dashboard-pro/assets/img/apple-icon.png" />
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
+          rel="stylesheet" />
+
+    <link href="~/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="~/css/nucleo-svg.css" rel="stylesheet" />
+
+    <script src="https://kit.fontawesome.com/42d5adcbca.js"
+            crossorigin="anonymous"></script>
+    <link href="~/css/nucleo-svg.css" rel="stylesheet" />
+
+    <link id="pagestyle"
+          href="~/css/soft-ui-dashboard.min.css@v=1.0.9.css"
+          rel="stylesheet" />
+
+    <style>
+        .async-hide {
+            opacity: 0 !important;
+        }
+    </style>
+
+    <script>
+        (function(a, s, y, n, c, h, i, d, e) {
+            s.className += " " + y;
+            h.start = 1 * new Date();
+            h.end = i = function() {
+                s.className = s.className.replace(RegExp(" ?" + y), "");
+            };
+            (a[n] = a[n] || []).hide = h;
+            setTimeout(function() {
+                i();
+                h.end = null;
+            }, c);
+            h.timeout = c;
+        })(window, document.documentElement, "async-hide", "dataLayer", 4000, {
+            "GTM-K9BGS8K": true,
+        });
+    </script>
+
+
+</head>
+<body>
+
+
+
+
+    <main class="main-content mt-0">
+        @RenderBody()
+    </main>
+    <script src="~/js/core/popper.min.js"></script>
+    <script src="~/js/core/bootstrap.min.js"></script>
+    <script src="~/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="~/js/plugins/smooth-scrollbar.min.js"></script>
+
+    <script src="~/js/plugins/dragula/dragula.min.js"></script>
+    <script src="~/js/plugins/jkanban/jkanban.js"></script>
+    <script src="~/js/plugins/chartjs.min.js"></script>
+    <script src="~/js/plugins/threejs.js"></script>
+    <script src="~/js/plugins/orbit-controls.js"></script>
+    <script>
+        var ctx = document.getElementById("chart-bars").getContext("2d");
+
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: [
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                ],
+                datasets: [
+                    {
+                        label: "Sales",
+                        tension: 0.4,
+                        borderWidth: 0,
+                        borderRadius: 4,
+                        borderSkipped: false,
+                        backgroundColor: "#fff",
+                        data: [450, 200, 100, 220, 500, 100, 400, 230, 500],
+                        maxBarThickness: 6,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+                interaction: {
+                    intersect: false,
+                    mode: "index",
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                        },
+                        ticks: {
+                            suggestedMin: 0,
+                            suggestedMax: 500,
+                            beginAtZero: true,
+                            padding: 15,
+                            font: {
+                                size: 14,
+                                family: "Open Sans",
+                                style: "normal",
+                                lineHeight: 2,
+                            },
+                            color: "#fff",
+                        },
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                        },
+                        ticks: {
+                            display: false,
+                        },
+                    },
+                },
+            },
+        });
+
+        var ctx2 = document.getElementById("chart-line").getContext("2d");
+
+        var gradientStroke1 = ctx2.createLinearGradient(0, 230, 0, 50);
+
+        gradientStroke1.addColorStop(1, "rgba(203,12,159,0.2)");
+        gradientStroke1.addColorStop(0.2, "rgba(72,72,176,0.0)");
+        gradientStroke1.addColorStop(0, "rgba(203,12,159,0)"); //purple colors
+
+        var gradientStroke2 = ctx2.createLinearGradient(0, 230, 0, 50);
+
+        gradientStroke2.addColorStop(1, "rgba(20,23,39,0.2)");
+        gradientStroke2.addColorStop(0.2, "rgba(72,72,176,0.0)");
+        gradientStroke2.addColorStop(0, "rgba(20,23,39,0)"); //purple colors
+
+        new Chart(ctx2, {
+            type: "line",
+            data: {
+                labels: [
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                ],
+                datasets: [
+                    {
+                        label: "Mobile apps",
+                        tension: 0.4,
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        borderColor: "#cb0c9f",
+                        borderWidth: 3,
+                        backgroundColor: gradientStroke1,
+                        fill: true,
+                        data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+                        maxBarThickness: 6,
+                    },
+                    {
+                        label: "Websites",
+                        tension: 0.4,
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        borderColor: "#3A416F",
+                        borderWidth: 3,
+                        backgroundColor: gradientStroke2,
+                        fill: true,
+                        data: [30, 90, 40, 140, 290, 290, 340, 230, 400],
+                        maxBarThickness: 6,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+                interaction: {
+                    intersect: false,
+                    mode: "index",
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5],
+                        },
+                        ticks: {
+                            display: true,
+                            padding: 10,
+                            color: "#b2b9bf",
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: "normal",
+                                lineHeight: 2,
+                            },
+                        },
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                            borderDash: [5, 5],
+                        },
+                        ticks: {
+                            display: true,
+                            color: "#b2b9bf",
+                            padding: 20,
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: "normal",
+                                lineHeight: 2,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        (function() {
+            const container = document.getElementById("globe");
+            const canvas = container.getElementsByTagName("canvas")[0];
+
+            const globeRadius = 100;
+            const globeWidth = 4098 / 2;
+            const globeHeight = 1968 / 2;
+
+            function convertFlatCoordsToSphereCoords(x, y) {
+                let latitude = ((x - globeWidth) / globeWidth) * -180;
+                let longitude = ((y - globeHeight) / globeHeight) * -90;
+                latitude = (latitude * Math.PI) / 180;
+                longitude = (longitude * Math.PI) / 180;
+                const radius = Math.cos(longitude) * globeRadius;
+
+                return {
+                    x: Math.cos(latitude) * radius,
+                    y: Math.sin(longitude) * globeRadius,
+                    z: Math.sin(latitude) * radius,
+                };
+            }
+
+            function makeMagic(points) {
+                const { width, height } = container.getBoundingClientRect();
+
+                // 1. Setup scene
+                const scene = new THREE.Scene();
+                // 2. Setup camera
+                const camera = new THREE.PerspectiveCamera(45, width / height);
+                // 3. Setup renderer
+                const renderer = new THREE.WebGLRenderer({
+                    canvas,
+                    antialias: true,
+                });
+                renderer.setSize(width, height);
+                // 4. Add points to canvas
+                // - Single geometry to contain all points.
+                const mergedGeometry = new THREE.Geometry();
+                // - Material that the dots will be made of.
+                const pointGeometry = new THREE.SphereGeometry(0.5, 1, 1);
+                const pointMaterial = new THREE.MeshBasicMaterial({
+                    color: "#989db5",
+                });
+
+                for (let point of points) {
+                    const { x, y, z } = convertFlatCoordsToSphereCoords(
+                        point.x,
+                        point.y,
+                        width,
+                        height
+                    );
+
+                    if (x && y && z) {
+                        pointGeometry.translate(x, y, z);
+                        mergedGeometry.merge(pointGeometry);
+                        pointGeometry.translate(-x, -y, -z);
+                    }
+                }
+
+                const globeShape = new THREE.Mesh(mergedGeometry, pointMaterial);
+                scene.add(globeShape);
+
+                container.classList.add("peekaboo");
+
+                // Setup orbital controls
+                camera.orbitControls = new THREE.OrbitControls(camera, canvas);
+                camera.orbitControls.enableKeys = false;
+                camera.orbitControls.enablePan = false;
+                camera.orbitControls.enableZoom = false;
+                camera.orbitControls.enableDamping = false;
+                camera.orbitControls.enableRotate = true;
+                camera.orbitControls.autoRotate = true;
+                camera.position.z = -265;
+
+                function animate() {
+                    // orbitControls.autoRotate is enabled so orbitControls.update
+                    // must be called inside animation loop.
+                    camera.orbitControls.update();
+                    requestAnimationFrame(animate);
+                    renderer.render(scene, camera);
+                }
+                animate();
+            }
+
+            function hasWebGL() {
+                const gl =
+                    canvas.getContext("webgl") ||
+                    canvas.getContext("experimental-webgl");
+                if (gl && gl instanceof WebGLRenderingContext) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            function init() {
+                if (hasWebGL()) {
+                    window;
+                    window
+                        .fetch(
+                            "https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-dashboard-pro/assets/js/points.json"
+                        )
+                        .then((response) => response.json())
+                        .then((data) => {
+                            makeMagic(data.points);
+                        });
+                }
+            }
+            init();
+        })();
+    </script>
+    <script>
+        var win = navigator.platform.indexOf("Win") > -1;
+        if (win && document.querySelector("#sidenav-scrollbar")) {
+            var options = {
+                damping: "0.5",
+            };
+            Scrollbar.init(document.querySelector("#sidenav-scrollbar"), options);
+        }
+    </script>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <script src="~/js/soft-ui-dashboard.min.js"></script>
+    @*
+    <div class="container-fluid overflow-hidden">
+    <div class="row vh-100 overflow-auto">
+    <div class="col-12 col-sm-3 col-xl-2 px-sm-2 px-0 bg-dark d-flex sticky-top">
+    <div class="d-flex flex-sm-column flex-row flex-grow-1 align-items-center align-items-sm-start px-3 pt-2 text-white">
+    <a href="/" class="d-flex align-items-center pb-sm-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <span class="fs-5">B<span class="d-none d-sm-inline">ugTracker</span></span>
+    </a>
+    <partial name="_LoginPartial" />
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+    <ul class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start" id="menu">
+    <li class="nav-item">
+    <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link px-sm-0 px-2">
+    <i class="fs-5 bi-house"></i><span class="ms-1 d-none d-sm-inline">Home</span>
+    </a>
+    </li>
+    <li>
+    <a asp-area="" asp-controller="Companies" asp-action="Index" class="nav-link px-sm-0 px-2">
+    <i class="fs-5 bi-building"></i><span class="ms-1 d-none d-sm-inline">Company</span>
+    </a>
+    </li>
+    <li class="dropdown">
+    <a asp-area="" asp-controller="Projects" asp-action="Index" class="nav-link dropdown-toggle px-sm-0 px-2" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fs-5 bi-file-earmark-ppt"></i><span class="ms-1 d-none d-sm-inline">Projects</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
+    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Create">New project...</a></li>
+    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Index">Index</a></li>
+    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="MyProjects">My Projects</a></li>
+    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="AllProjects">All Projects</a></li>
+    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="ArchivedProjects">Archived Projects</a></li>
+    @if (User.IsInRole("ProjectManager") || User.IsInRole("Admin"))
+    {
+    <li>
+    <a class="dropdown-item"
+    asp-area=""
+    asp-controller="Projects"
+    asp-action="UnassignedProjects">
+    Unassigned Projects
+    </a>
+    </li>
+    }
+    </ul>
+    </li>
+    <li class="dropdown">
+    <a asp-area="" asp-controller="Tickets" asp-action="Index" class="nav-link dropdown-toggle px-sm-0 px-2" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fs-5 bi-file-earmark-font"></i><span class="ms-1 d-none d-sm-inline">Tickets</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
+    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Create">New ticket...</a></li>
+    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Index">Index</a></li>
+    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="MyTickets">My Tickets</a></li>
+    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="AllTickets">All Tickets</a></li>
+    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets">Archived Tickets</a></li>
+    @if (User.IsInRole("ProjectManager") || User.IsInRole("Admin"))
+    {
+    <li>
+    <a class="dropdown-item"
+    asp-area=""
+    asp-controller="Tickets"
+    asp-action="UnassignedTickets">
+    Unassigned Tickets
+    </a>
+    </li>
+    }
+
+    </ul>
+    </li>
+    <li>
+    <a asp-area="" asp-controller="Notifications" asp-action="Index" class="nav-link px-sm-0 px-2">
+    <i class="fs-5 bi-mailbox2"></i><span class="ms-1 d-none d-sm-inline">Notifications</span>
+    </a>
+    </li>
+    </ul>
+    }
+    </div>
+    </div>
+    <div class="col d-flex flex-column h-100">
+    <main class="row">
+    @RenderBody()
+    </main>
+    <footer class="row bg-light py-4 mt-auto">
+    <div class="container">
+    &copy; 2022 - JATS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+    </footer>
+    </div>
+    </div>
+    </div>
+    *@
+
+
+
+    @*
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    *@
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
