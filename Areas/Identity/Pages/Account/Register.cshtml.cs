@@ -141,7 +141,7 @@ namespace JATS.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            if (IsValidEmail(Input.Email))
+            if (!IsValidEmail(Input.Email))
             {
                 ModelState.AddModelError("UserError", $"Email '{Input.Email}' has invalid character(S).");
                 return Page();
@@ -187,13 +187,24 @@ namespace JATS.Areas.Identity.Pages.Account
                 var user = CreateUser();
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
-                await _userManager.AddToRoleAsync(user, Roles.Admin.ToString());
-                string id = user.Id;
+                user.CompanyId = newCompany.Id;
+
+                IdentityResult result;
+                try
+                {
+                    await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                    await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                    result = await _userManager.CreateAsync(user, Input.Password);
+                }
+                catch (Exception)
+                {
+
+                    return BadRequest();
+                }
+
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, Roles.Admin.ToString());
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
