@@ -19,6 +19,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using JATS.Data;
+using JATS.Models.Enums;
+using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace JATS.Areas.Identity.Pages.Account
 {
@@ -30,13 +35,15 @@ namespace JATS.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<JTUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
 
         public RegisterModel(
             UserManager<JTUser> userManager,
             IUserStore<JTUser> userStore,
             SignInManager<JTUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +51,7 @@ namespace JATS.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         /// <summary>
@@ -107,6 +115,18 @@ namespace JATS.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+
+
+
+            [Display(Name = "Company Name")]
+            [Required]
+            public string CompanyName { get; set; }
+
+            [Required]
+
+            [Display(Name = "Company Description")]
+            public string CompanyDescription { get; set; }
         }
 
 
@@ -120,16 +140,58 @@ namespace JATS.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            if (IsValidEmail(Input.Email))
+            {
+                ModelState.AddModelError("UserError", $"Email '{Input.Email}' has invalid character(S).");
+                return Page();
+            }
+
+            if ((await _context
+                .Companies.
+                FirstOrDefaultAsync(e => e.Name == Input.CompanyName)) != null)
+            {
+                ModelState.AddModelError("CompanyError", $"Company '{Input.CompanyName}' has already been registered by another tenant. Please contact support");
+                return Page();
+            }
+
+            if ((await _userManager.FindByEmailAsync(Input.Email)) != null)
+            {
+                ModelState.AddModelError("UserError", $"Email '{Input.Email}' is already taken.");
+                return Page();
+            }
+
+
+
+
             if (ModelState.IsValid)
             {
+                Company newCompany = new Company()
+                {
+                    Name = Input.CompanyName.Trim()
+,
+                    Description = Input.CompanyDescription,
+                };
+
+                try
+                {
+                    await _context.Companies.AddAsync(newCompany);
+                    _context.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return BadRequest();
+                }
+
+
                 var user = CreateUser();
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
-
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
+                await _userManager.AddToRoleAsync(user, Roles.Admin.ToString());
+                string id = user.Id;
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
@@ -156,6 +218,10 @@ namespace JATS.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
                 }
+
+
+
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -187,6 +253,64 @@ namespace JATS.Areas.Identity.Pages.Account
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
             return (IUserEmailStore<JTUser>)_userStore;
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            var trimmedEmail = email.Trim();
+
+            if (trimmedEmail.EndsWith("."))
+            {
+                return false; // suggested by @TK-421
+            }
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == trimmedEmail;
+            }
+            catch
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                    return false;
+
+                try
+                {
+                    // Normalize the domain
+                    email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
+                                          RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+                    // Examines the domain part of the email and normalizes it.
+                    string DomainMapper(Match match)
+                    {
+                        // Use IdnMapping class to convert Unicode domain names.
+                        var idn = new IdnMapping();
+
+                        // Pull out and process domain name (throws ArgumentException on invalid)
+                        string domainName = idn.GetAscii(match.Groups[2].Value);
+
+                        return match.Groups[1].Value + domainName;
+                    }
+                }
+                catch (RegexMatchTimeoutException e)
+                {
+                    return false;
+                }
+                catch (ArgumentException e)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    return Regex.IsMatch(email,
+                        @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                        RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+                }
+                catch (RegexMatchTimeoutException)
+                {
+                    return false;
+                }
+            }
         }
     }
 }
