@@ -24,6 +24,7 @@ using JATS.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using JATS.Services.Interfaces;
 
 namespace JATS.Areas.Identity.Pages.Account
 {
@@ -36,6 +37,7 @@ namespace JATS.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _context;
+        private readonly IProjectService _projectService;
 
         public RegisterModel(
             UserManager<JTUser> userManager,
@@ -43,7 +45,8 @@ namespace JATS.Areas.Identity.Pages.Account
             SignInManager<JTUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IProjectService projectService)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -52,6 +55,7 @@ namespace JATS.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _context = context;
+            _projectService = projectService;
         }
 
         /// <summary>
@@ -216,8 +220,31 @@ namespace JATS.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _emailSender.SendEmailAsync(Input.Email, "J.A.T.S Demo App - Confirm your email",
+                        $"Thank you for registering and trying out my demo app! Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    //create issues poject
+                    try
+                    {
+                        await _projectService.AddNewProjectAsync(new Project
+                        {
+                            CompanyId = newCompany.Id,
+                            Name = "Support Tickets",
+                            Description = $"General Issues Reported within {newCompany.Name}",
+                            StartDate = DateTime.UtcNow,
+                            EndDate = DateTime.UtcNow.AddYears(99),
+                            ProjectPriorityId = (await _context
+                            .ProjectPriorities.FirstOrDefaultAsync(p =>
+                            p.Name == ProjectPriorityEnum.Low.ToString())).Id,
+                            isPrimordial = true
+                        });
+                    }
+                    catch (Exception)
+                    {
+
+                        return BadRequest();
+                    }
+
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

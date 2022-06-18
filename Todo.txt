@@ -6,4 +6,8 @@ anyone should be able to create a project
 code user roles.
 
 
-set isArhivable to false when creating default projects on seeding and new company
+set primordial to false when creating default projects on seeding and new company -done
+disbale archiving for primordial projects
+
+
+allow upload user image during registration

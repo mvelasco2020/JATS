@@ -88,6 +88,10 @@ namespace JATS.Services
 
         public async Task ArchiveProjectAsync(Project project)
         {
+            if ((await _context.Projects.FirstOrDefaultAsync(p => p.Id == project.Id)).isPrimordial)
+            {
+                return;
+            }
 
             try
             {

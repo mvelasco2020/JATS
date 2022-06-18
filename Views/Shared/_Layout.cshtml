@@ -1,5 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using JATS.Extensions
+@using Microsoft.AspNetCore.Identity
+@using JATS.Services.Interfaces
 @inject SignInManager<JTUser> SignInManager
+@inject ICompanyInfoService CompanyService
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,6 +65,10 @@
 </head>
 <body class="g-sidenav-show bg-gray-100">
 
+    @{
+        var companyId = User.Identity.GetCompanyId().Value;
+        var company = await CompanyService.GetCompanyByIdAsync(companyId);
+    }
 
     @* Side Nav *@
     <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3"
@@ -116,7 +123,10 @@
                                     </g>
                                 </svg>
                             </div>
-                            <span class="nav-link-text ms-1">Company</span>
+                            <div class="text-wrap">
+
+                                <span class="nav-link-text ms-1">@company.Name</span>
+                            </div>
                         </a>
                         <div class="collapse show" id="dashboardsExamples">
                             <ul class="nav ms-4 ps-3">
