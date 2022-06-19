@@ -11,3 +11,14 @@ disbale archiving for primordial projects
 
 
 allow upload user image during registration
+
+clean up unused scripts
+
+
+
+get current page and update side nav buttons window.location.href
+
+
+get current page from controlelrs and pass to view to update the bread crumbs.
+
+Add Member function

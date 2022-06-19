@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using JATS.Data;
 using JATS.Models;
 using Microsoft.AspNetCore.Authorization;
+using JATS.Services.Interfaces;
+using JATS.Extensions;
 
 namespace JATS.Controllers
 {
@@ -15,18 +17,23 @@ namespace JATS.Controllers
     public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICompanyInfoService _companyService;
 
-        public CompaniesController(ApplicationDbContext context)
+        public CompaniesController(ApplicationDbContext context,
+            ICompanyInfoService companyService)
         {
             _context = context;
+            _companyService = companyService;
         }
 
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-            return _context.Companies != null ?
-                        View(await _context.Companies.ToListAsync()) :
-                        Problem("Entity set 'ApplicationDbContext.Companies'  is null.");
+
+            Company company = await _companyService
+                .GetCompanyByIdAsync(User.Identity.GetCompanyId().Value);
+
+            return View(company);
         }
 
         // GET: Companies/Details/5

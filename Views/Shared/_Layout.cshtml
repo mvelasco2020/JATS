@@ -43,23 +43,26 @@
         }
     </style>
 
+    @*
+
     <script>
-        (function(a, s, y, n, c, h, i, d, e) {
-            s.className += " " + y;
-            h.start = 1 * new Date();
-            h.end = i = function() {
-                s.className = s.className.replace(RegExp(" ?" + y), "");
-            };
-            (a[n] = a[n] || []).hide = h;
-            setTimeout(function() {
-                i();
-                h.end = null;
-            }, c);
-            h.timeout = c;
-        })(window, document.documentElement, "async-hide", "dataLayer", 4000, {
-            "GTM-K9BGS8K": true,
-        });
+    (function(a, s, y, n, c, h, i, d, e) {
+    s.className += " " + y;
+    h.start = 1 * new Date();
+    h.end = i = function() {
+    s.className = s.className.replace(RegExp(" ?" + y), "");
+    };
+    (a[n] = a[n] || []).hide = h;
+    setTimeout(function() {
+    i();
+    h.end = null;
+    }, c);
+    h.timeout = c;
+    })(window, document.documentElement, "async-hide", "dataLayer", 4000, {
+    "GTM-K9BGS8K": true,
+    });
     </script>
+    *@
 
 
 </head>
@@ -130,55 +133,19 @@
                         </a>
                         <div class="collapse show" id="dashboardsExamples">
                             <ul class="nav ms-4 ps-3">
-                                <li class="nav-item active">
-                                    <a class="nav-link active" href="default.html">
-                                        <span class="sidenav-mini-icon"> D </span>
-                                        <span class="sidenav-normal"> Default </span>
+                                <li class="nav-item">
+                                    <a class="nav-link active"
+                                       asp-action="index"
+                                       asp-controller="home">
+                                        <span class="sidenav-mini-icon"> H </span>
+                                        <span class="sidenav-normal"> Home </span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="automotive.html">
+                                    <a class="nav-link" asp-action="index"
+                                       asp-controller="companies">
                                         <span class="sidenav-mini-icon"> A </span>
-                                        <span class="sidenav-normal"> Automotive </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="smart-home.html">
-                                        <span class="sidenav-mini-icon"> S </span>
-                                        <span class="sidenav-normal"> Smart Home </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       data-bs-toggle="collapse"
-                                       aria-expanded="false"
-                                       href="default.html#vrExamples">
-                                        <span class="sidenav-mini-icon"> V </span>
-                                        <span class="sidenav-normal">
-                                            Virtual Reality <b class="caret"></b>
-                                        </span>
-                                    </a>
-                                    <div class="collapse" id="vrExamples">
-                                        <ul class="nav nav-sm flex-column">
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="vr/vr-default.html">
-                                                    <span class="sidenav-mini-icon text-xs"> V </span>
-                                                    <span class="sidenav-normal"> VR Default </span>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="vr/vr-info.html">
-                                                    <span class="sidenav-mini-icon text-xs"> V </span>
-                                                    <span class="sidenav-normal"> VR Info </span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="crm.html">
-                                        <span class="sidenav-mini-icon"> C </span>
-                                        <span class="sidenav-normal"> CRM </span>
+                                        <span class="sidenav-normal"> Company </span>
                                     </a>
                                 </li>
                             </ul>
@@ -713,6 +680,9 @@
     <script src="~/js/plugins/chartjs.min.js"></script>
     <script src="~/js/plugins/threejs.js"></script>
     <script src="~/js/plugins/orbit-controls.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <script src="~/js/soft-ui-dashboard.min.js"></script>
     <script>
         var ctx = document.getElementById("chart-bars").getContext("2d");
 
@@ -904,6 +874,7 @@
             },
         });
 
+        @*
         (function() {
             const container = document.getElementById("globe");
             const canvas = container.getElementsByTagName("canvas")[0];
@@ -1014,20 +985,24 @@
             }
             init();
         })();
+        *@
+
     </script>
+
+    @*
+
     <script>
-        var win = navigator.platform.indexOf("Win") > -1;
-        if (win && document.querySelector("#sidenav-scrollbar")) {
-            var options = {
-                damping: "0.5",
-            };
-            Scrollbar.init(document.querySelector("#sidenav-scrollbar"), options);
-        }
+    var win = navigator.platform.indexOf("Win") > -1;
+    if (win && document.querySelector("#sidenav-scrollbar")) {
+    var options = {
+    damping: "0.5",
+    };
+    Scrollbar.init(document.querySelector("#sidenav-scrollbar"), options);
+    }
     </script>
+    *@
 
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-    <script src="~/js/soft-ui-dashboard.min.js"></script>
     @*
     <div class="container-fluid overflow-hidden">
     <div class="row vh-100 overflow-auto">

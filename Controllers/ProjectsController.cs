@@ -51,7 +51,10 @@ namespace JATS.Controllers
             int companyId = User.Identity.GetCompanyId().Value;
 
             //Rreturns all projects that are not archived
-            projects = await _projectService.GetAllProjectsByCompany(companyId);
+            projects = (await _projectService
+                .GetAllProjectsByCompany(companyId))
+                .Where(p => p.isPrimordial == false)
+                .ToList();
 
 
 
