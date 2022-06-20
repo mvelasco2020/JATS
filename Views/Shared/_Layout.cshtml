@@ -275,35 +275,40 @@
                             <ul class="nav ms-4 ps-3">
                                 <li class="nav-item">
                                     <a class="nav-link"
-                                       href="https://demos.creative-tim.com/soft-ui-dashboard-pro/pages/applications/kanban.html">
+                                       asp-action="MyTickets"
+                                    asp-controller="Tickets">
                                         <span class="sidenav-mini-icon"> M </span>
                                         <span class="sidenav-normal"> My Tickets </span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link"
-                                       href="https://demos.creative-tim.com/soft-ui-dashboard-pro/pages/applications/wizard.html">
+                                       asp-action="Index"
+                                    asp-controller="Tickets">
                                         <span class="sidenav-mini-icon"> a </span>
                                         <span class="sidenav-normal"> All Tickets </span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link"
-                                       href="https://demos.creative-tim.com/soft-ui-dashboard-pro/pages/applications/datatables.html">
+                                       asp-action="Create"
+                                    asp-controller="Tickets">
                                         <span class="sidenav-mini-icon"> C </span>
                                         <span class="sidenav-normal"> Create </span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link"
-                                       href="https://demos.creative-tim.com/soft-ui-dashboard-pro/pages/applications/calendar.html">
+                                       asp-action="UnassignedTickets"
+                                    asp-controller="Tickets">
                                         <span class="sidenav-mini-icon"> U </span>
                                         <span class="sidenav-normal"> Unassigned </span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link"
-                                       href="https://demos.creative-tim.com/soft-ui-dashboard-pro/pages/applications/analytics.html">
+                                       asp-action="ArchivedTickets"
+                                    asp-controller="Tickets">
                                         <span class="sidenav-mini-icon"> A </span>
                                         <span class="sidenav-normal"> Archived </span>
                                     </a>
@@ -681,7 +686,7 @@
     <script src="~/js/plugins/threejs.js"></script>
     <script src="~/js/plugins/orbit-controls.js"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-
+    <script src="~/js/plugins/datatables.js"></script>
     <script src="~/js/soft-ui-dashboard.min.js"></script>
     <script>
         var ctx = document.getElementById("chart-bars").getContext("2d");
