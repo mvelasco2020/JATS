@@ -10,7 +10,7 @@
 @model Company
 
 @{
-    ViewData["Title"] = $"J.A.T.S - {Model.Name}";
+    ViewData["Title"] = $"{Model.Name}";
     JTUser user = await UserManager.GetUserAsync(User);
     var roles = (await RoleService.GetUserRolesAsync(user));
     var tickets = await TicketService.GetAllTicketsByCompanyAsync(Model.Id);
@@ -352,6 +352,9 @@
 
         @*User Info Table*@
         <div class="card">
+                <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
+        <h6 class="h5">Company Directory</h6>
+    </div>
             <div class="table-responsive">
                 <table class="table align-items-center mb-0" id="datatable">
                     <thead>
@@ -359,6 +362,8 @@
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Function</th>
                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Employed</th>
+                                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">PhoneNumber</th>
+
                             <th class="text-secondary opacity-7"></th>
                         </tr>
                     </thead>
@@ -400,6 +405,9 @@
                             <td class="align-middle text-center">
                                 <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
                             </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">@member.PhoneNumber</span>
+                            </td>
                             <td class="align-middle">
                                 <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                                     Message
@@ -419,14 +427,7 @@
 
     </div>
     @section scripts{
-        @*
 
-        <script
-  src="https://code.jquery.com/jquery-3.5.1.js"
-  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-  crossorigin="anonymous"></script>
-        <script src="~/js/plugins/datatables.js"></script>
-        *@
         <script>
 
       const dataTableBasic = new simpleDatatables.DataTable("#datatable", {
