@@ -127,6 +127,8 @@ namespace JATS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize("Admin,ProjectManager")]
+
         public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
 
@@ -170,6 +172,7 @@ namespace JATS.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize("Admin,ProjectManager")]
         public async Task<IActionResult> Edit(int? id)
         {
 
@@ -199,6 +202,7 @@ namespace JATS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize("Admin,ProjectManager")]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
             if (model is not null)
