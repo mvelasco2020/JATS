@@ -5,6 +5,160 @@
     ViewData["Title"] = "Log in";
 }
 
+
+
+
+<main class="main-content mt-0">
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+
+
+                    <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
+
+                        <h1 class="display-2 text-center font-weight-bolder">J.A.T.S</h1>
+                        <p class="text-center">Just Another Ticketing System</p>
+                        <div class="card card-plain">
+                            <div class="card-header pb-0 text-left">
+                                <h4>Sign In</h4>
+                                <p class="mb-0">
+                                    Enter your email and password to login
+                                </p>
+                            </div>
+                            <div class="card-body pb-3">
+                                <form id="account" method="post">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
+                                    <label asp-for="Input.Email"></label>
+                                    <div class="mb-3">
+                                        <input asp-for="Input.Email"
+                                               class="form-control"
+                                               placeholder="Email"
+                                               aria-label="Email"
+                                               autocomplete="username" aria-required="true" />
+                                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                    </div>
+
+                                    <label asp-for="Input.Password"></label>
+                                    <div class="mb-3">
+                                        <input asp-for="Input.Password"
+                                               class="form-control"
+                                               placeholder="Password"
+                                               autocomplete="current-password"
+                                               aria-required="true"
+                                               aria-label="Password" />
+                                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+                                    </div>
+
+                                    <div class="form-check form-check-info text-left">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               asp-for="Input.RememberMe"
+                                               checked />
+                                        <label class="form-check-label" asp-for="Input.RememberMe">
+                                            @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                        </label>
+                                    </div>
+                                    <div class="text-center">
+                                        <button id="login-submit" type="submit"
+                                                class="btn bg-gradient-primary w-100 mt-4 mb-0">
+                                            Sign in
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer text-center pt-0 px-sm-4 px-1">
+                                <p class="mb-4 mx-auto">
+                                    Dont have an account?
+                                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl"
+                                       class="text-primary text-gradient font-weight-bold">Sign up</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <span style="padding-left: 25px;
+                                     padding-right: 25px;">
+                            <p style="width: 100%;
+                                        text-align: center;
+                                        border-bottom: 1px solid #000;
+                                        line-height: 0.1em;
+                                        margin: 10px 0 20px;"
+                               class="fs-5 text-center text-gray">
+                                <span style="background:#fff;padding:0 10px; ">OR</span>
+                            </p>
+                        </span>
+
+                        <div class="mt-2">
+                            <p class="text-center">Use a demo account to login</p>
+                        </div>
+
+                        <div class="card card-plain">
+                            <div class="container">
+                                <div class="row">
+
+
+                                    <div class="text-center col-5">
+                                        <button type="button"
+                                                class="btn bg-gradient-primary w-100 mt-4 mb-0">
+                                            Admin
+                                        </button>
+                                    </div>
+                                    <div class="text-center col-7">
+                                        <button type="button"
+                                                class="btn bg-gradient-primary w-100 mt-4 mb-0">
+                                            Project Manager
+                                        </button>
+                                    </div>
+                                    <div class="text-center col-7">
+                                        <button type="button"
+                                                class="btn bg-gradient-primary w-100 mt-4 mb-0">
+                                            Technician
+                                        </button>
+                                    </div>
+
+                                    <div class="text-center col-5">
+                                        <button type="button"
+                                                class="btn bg-gradient-primary w-100 mt-4 mb-0">
+                                            Peasant
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 end-0 text-center justify-content-center flex-column">
+                        <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center">
+                            <img src="~/img/shapes/pattern-lines.svg"
+                                 alt="pattern-lines"
+                                 class="position-absolute opacity-4 start-0" />
+                            <div class="position-relative">
+                                <img class="max-width-500 w-100 position-relative z-index-2"
+                                     src="~/img/illustrations/rocket-white.png"
+                                     alt="rocket" />
+                            </div>
+                            <h4 class="mt-5 text-white font-weight-bolder">
+                                Your journey starts here
+                            </h4>
+                            <p class="text-white">
+                                To Infinity And Beyond!
+                            </p>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+@*
 <h1>@ViewData["Title"]</h1>
 <div class="row">
     <div class="col-md-4">
@@ -79,6 +233,7 @@
         </section>
     </div>
 </div>
+*@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

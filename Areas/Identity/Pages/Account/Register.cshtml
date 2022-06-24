@@ -4,6 +4,261 @@
     ViewData["Title"] = "Register";
 }
 
+
+
+<div class="container py-4 mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mt-5 text-center">Let's Get Your Account Set Up</h3>
+            <h5 class="text-secondary font-weight-normal text-center">
+                This information will let us know more about you.
+            </h5>
+            <div class="multisteps-form mb-5">
+                <div class="row">
+                    <div class="col-12 col-lg-8 mx-auto my-5">
+                        <div class="multisteps-form__progress">
+                            <button class="multisteps-form__progress-btn js-active"
+                                    type="button"
+                                    title="User Info">
+                                <span>Start</span>
+                            </button>
+                            <button class="multisteps-form__progress-btn"
+                                    type="button"
+                                    title="Address">
+                                <span>Account</span>
+                            </button>
+                            <button class="multisteps-form__progress-btn"
+                                    type="button"
+                                    title="Company">
+                                <span>Company</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-8 m-auto">
+                        <form id="registerForm"
+                              asp-area="Identity" asp-page="/Account/Register"
+                              method="post"
+                              class="multisteps-form__form was-validated"
+                              style="height: 463px">
+
+                            <div class="card multisteps-form__panel p-3 border-radius-xl bg-white js-active"
+                                 data-animation="FadeIn">
+                                <div class="row">
+                                    <div class="col-10 mx-auto text-center">
+                                        <h5 class="font-weight-normal text-center">
+                                            Lets begin.
+                                        </h5>
+                                        <div asp-validation-summary="All"
+                                             class="text-danger"></div>
+                                        <p>
+                                            We need to collect some basic information about you and your company
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="multisteps-form__content">
+                                    <div class="row mt-3">
+                                        <p>
+                                            Your account will be the first  within your
+                                            tenant and will have an admin permission for the entire company space, you will be asked to provide your company name in the next steps.
+                                            After you successfully create an account, you will be able to create accounts for your team members.
+
+                                        </p>
+                                        <p>
+                                            Note that if an company with the same name have been claimed, you cannot create a new account with the same company name
+
+                                        </p>
+                                        <small>(In production there would be a way to prove ownership of a domain via DNS record.)</small>
+                                    </div>
+                                    <div class="button-row d-flex mt-4">
+                                        <a href="~/Identity/Account/login"
+                                           class="btn bg-gradient-light mb-0 js-btn-prev"
+                                           type="button"
+                                           title="Prev">
+                                            Back To Login
+                                        </a>
+                                        <button class="btn bg-gradient-dark ms-auto mb-0 js-btn-next"
+                                                type="button"
+                                                title="Next">
+                                            Next
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="card multisteps-form__panel p-3 border-radius-xl bg-white"
+                                 data-animation="FadeIn">
+                                <div class="row text-center">
+                                    <div class="col-10 mx-auto">
+                                        <h5 class="font-weight-normal">
+                                            Let's start with the basic information
+                                        </h5>
+                                        <div asp-validation-summary="All"
+                                             class="text-danger"></div>
+                                        <p>
+                                            Let us know your name and email address. Use an
+                                            address you don't mind other users contacting you at
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="multisteps-form__content">
+                                    <div class="row mt-3">
+                                        <div class="col-12 col-sm-4 d-flex justify-content-center pt-2">
+                                            <div class="avatar avatar-xxl position-relative">
+                                                <img src="~/img/team-2.jpg"
+                                                     class="border-radius-md"
+                                                     alt="team-2" />
+                                                <a href="javascript:;"
+                                                   class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2">
+                                                    <i class="fa fa-pen top-0"
+                                                       data-bs-toggle="tooltip"
+                                                       data-bs-placement="top"
+                                                       title=""
+                                                       aria-hidden="true"
+                                                       data-bs-original-title="Edit Image"
+                                                       aria-label="Edit Image"></i><span class="sr-only">Edit Image</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-8 mt-4 mt-sm-0 text-start">
+                                            <label asp-for="Input.FirstName"></label>
+                                            <input class="multisteps-form__input form-control mb-3 is-invalid personalinfo"
+                                                   type="text"
+                                                   asp-for="Input.FirstName"
+                                                   required
+                                                   placeholder="Eg. Michael"
+                                                   aria-required="true"
+                                                   onfocus="focused(this)"
+                                                   onfocusout="defocused(this)" />
+
+                                            <label asp-for="Input.LastName"></label>
+                                            <input class="multisteps-form__input form-control mb-3 is-invalid personalinfo"
+                                                   type="text"
+                                                   required
+                                                   placeholder="Eg. Tomson"
+                                                   asp-for="Input.LastName"
+                                                   onfocus="focused(this)"
+                                                   aria-required="true"
+                                                   onfocusout="defocused(this)" />
+
+                                            <label asp-for="Input.Email"></label>
+                                            <input class="multisteps-form__input form-control is-invalid personalinfo"
+                                                   type="email"
+                                                   asp-for="Input.Email"
+                                                   required
+                                                   aria-required="true"
+                                                   placeholder="Eg. soft@dashboard.com"
+                                                   onfocus="focused(this)"
+                                                   onfocusout="defocused(this)" />
+
+                                            <label asp-for="Input.Password"></label>
+                                            <input class="multisteps-form__input form-control is-invalid personalinfo"
+                                                   type="password"
+                                                   asp-for="Input.Password"
+                                                   required
+                                                   aria-required="true"
+                                                   onfocus="focused(this)"
+                                                   onfocusout="defocused(this)" />
+                                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+                                            <label asp-for="Input.ConfirmPassword"></label>
+                                            <input class="multisteps-form__input form-control is-invalid personalinfo"
+                                                   type="password"
+                                                   asp-for="Input.ConfirmPassword"
+                                                   required
+                                                   aria-required="true"
+                                                   onfocus="focused(this)"
+                                                   onfocusout="defocused(this)" />
+                                        </div>
+                                    </div>
+                                    <div class="button-row d-flex mt-4">
+                                        <button class="btn bg-gradient-light mb-0 js-btn-prev"
+                                                type="button"
+                                                title="Prev">
+                                            Prev
+                                        </button>
+                                        <button class="btn bg-gradient-dark ms-auto mb-0 js-btn-next"
+                                                type="button"
+                                                title="Next">
+                                            Next
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card multisteps-form__panel p-3 border-radius-xl bg-white"
+                                 data-animation="FadeIn">
+                                <div class="row text-center">
+                                    <div class="col-10 mx-auto">
+                                        <h5 class="font-weight-normal">
+                                            Tell us about your awesome company!
+                                        </h5>
+                                        <div asp-validation-summary="All"
+                                             class="text-danger"></div>
+                                        <p>
+                                            One thing I love about the later sunsets is the
+                                            chance to go for a walk through the neighborhood
+                                            woods before dinner
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="multisteps-form__content">
+                                    <div class="row text-start">
+                                        <div class="col-12 ms-auto mt-3">
+                                            <label asp-for="Input.CompanyName"> </label>
+                                            <input asp-for="Input.CompanyName"
+                                                   class="multisteps-form__input form-control is-invalid"
+                                                   type="text"
+                                                   required
+                                                   placeholder="Eg. SpaceX"
+                                                   onfocus="focused(this)"
+                                                   onfocusout="defocused(this)" />
+                                        </div>
+                                        <div class="col-12 ms-auto mt-3">
+                                            <label asp-for="Input.CompanyDescription"></label>
+                                            <input class="multisteps-form__input form-control is-invalid"
+                                                   type="text"
+                                                   required
+                                                   asp-for="Input.CompanyDescription"
+                                                   placeholder="Eg. We build rocketships"
+                                                   onfocus="focused(this)"
+                                                   onfocusout="defocused(this)" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="button-row d-flex mt-4 col-12">
+                                            <button class="btn bg-gradient-light mb-0 js-btn-prev"
+                                                    type="button"
+                                                    title="Prev">
+                                                Prev
+                                            </button>
+                                            <button class="btn bg-gradient-dark ms-auto mb-0"
+                                                    type="submit"
+                                                    title="Send">
+                                                Send
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@*
+
+
 <h1>@ViewData["Title"]</h1>
 
 <div class="row">
@@ -75,7 +330,8 @@
         </section>
     </div>
 </div>
+*@
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+
 }

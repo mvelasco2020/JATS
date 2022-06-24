@@ -1,0 +1,70 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<JTUser> SignInManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="https://demos.creative-tim.com/soft-ui-dashboard-pro/assets/img/apple-icon.png">
+    <title>@ViewData["Title"] - JATS</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+
+
+
+    <link rel="apple-touch-icon"
+          sizes="76x76"
+          href="https://demos.creative-tim.com/soft-ui-dashboard-pro/assets/img/apple-icon.png" />
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
+          rel="stylesheet" />
+
+    <link href="~/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="~/css/nucleo-svg.css" rel="stylesheet" />
+
+    <script src="https://kit.fontawesome.com/42d5adcbca.js"
+            crossorigin="anonymous"></script>
+    <link href="~/css/nucleo-svg.css" rel="stylesheet" />
+
+    <link id="pagestyle"
+          href="~/css/soft-ui-dashboard.css"
+          rel="stylesheet" />
+
+    <style>
+        .async-hide {
+            opacity: 0 !important;
+        }
+    </style>
+
+
+</head>
+<body>
+
+
+
+
+    <main class="main-content mt-0">
+        @RenderBody()
+        <partial name="_FooterPartial" />
+    </main>
+
+
+    <script src="~/js/core/popper.min.js"></script>
+    <script src="~/js/core/bootstrap.min.js"></script>
+    <script src="~/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="~/js/plugins/smooth-scrollbar.min.js"></script>
+
+    <script src="~/js/plugins/dragula/dragula.min.js"></script>
+    <script src="~/js/plugins/threejs.js"></script>
+    <script src="~/js/plugins/multistep-form.js"></script>
+    <script src="~/js/plugins/choices.min.js"></script>
+
+
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <script src="~/js/soft-ui-dashboard.js"></script>
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

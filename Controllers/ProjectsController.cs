@@ -51,7 +51,10 @@ namespace JATS.Controllers
             int companyId = User.Identity.GetCompanyId().Value;
 
             //Rreturns all projects that are not archived
-            projects = await _projectService.GetAllProjectsByCompany(companyId);
+            projects = (await _projectService
+                .GetAllProjectsByCompany(companyId))
+                .Where(p => p.isPrimordial == false)
+                .ToList();
 
 
 
@@ -124,6 +127,7 @@ namespace JATS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
 
@@ -167,6 +171,7 @@ namespace JATS.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> Edit(int? id)
         {
 
@@ -196,6 +201,7 @@ namespace JATS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
             if (model is not null)

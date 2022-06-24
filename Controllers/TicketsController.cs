@@ -145,21 +145,34 @@ namespace JATS.Controllers
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+
+
             if (id == null)
             {
                 return NotFound();
             }
 
             Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+            JTUser user = _userManager.GetUserAsync(User).Result;
 
-            if (ticket == null)
+
+            if (IsUserAuthorizedToMakeChanges(user, ticket))
             {
-                return NotFound();
+
+                if (ticket == null)
+                {
+                    return NotFound();
+                }
+                ViewData["TicketPriorityId"] = new SelectList((await _lookupService.GetTicketPrioritiesAsync()), "Id", "Name", ticket.TicketPriorityId);
+                ViewData["TicketStatusId"] = new SelectList((await _lookupService.GetTicketStatusesAsync()), "Id", "Name", ticket.TicketStatusId);
+                ViewData["TicketTypeId"] = new SelectList((await _lookupService.GetTicketTypesAsync()), "Id", "Name", ticket.TicketTypeId);
+                return View(ticket);
             }
-            ViewData["TicketPriorityId"] = new SelectList((await _lookupService.GetTicketPrioritiesAsync()), "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList((await _lookupService.GetTicketStatusesAsync()), "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList((await _lookupService.GetTicketTypesAsync()), "Id", "Name", ticket.TicketTypeId);
-            return View(ticket);
+            else
+            {
+                return Unauthorized();
+            }
+
         }
 
         // POST: Tickets/Edit/5
@@ -169,6 +182,8 @@ namespace JATS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Created,Updated,Archived,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,TechnicianUserId")] Ticket ticket)
         {
+
+
             if (id != ticket.Id)
             {
                 return NotFound();
@@ -178,27 +193,35 @@ namespace JATS.Controllers
             {
                 JTUser user = await _userManager.GetUserAsync(User);
                 Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
-                try
-                {
-                    ticket.Updated = DateTimeOffset.Now;
-                    await _ticketService.UpdateTicketAsync(ticket);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await TicketExists(ticket.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                //Todo add history
-                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
-                await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
 
-                return RedirectToAction(nameof(Index));
+                if (IsUserAuthorizedToMakeChanges(user, ticket))
+                {
+                    try
+                    {
+                        ticket.Updated = DateTimeOffset.Now;
+                        await _ticketService.UpdateTicketAsync(ticket);
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!await TicketExists(ticket.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    //Todo add history
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                    await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return Unauthorized();
+                }
             }
             ViewData["TicketPriorityId"] = new SelectList((await _lookupService.GetTicketPrioritiesAsync()), "Id", "Name", ticket.TicketPriorityId);
             ViewData["TicketStatusId"] = new SelectList((await _lookupService.GetTicketStatusesAsync()), "Id", "Name", ticket.TicketStatusId);
@@ -216,19 +239,27 @@ namespace JATS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize("Admin,ProjectManager")]
         public async Task<IActionResult> ArchiveTicket(int id)
         {
 
+
             var ticket = await _ticketService.GetTicketByIdAsync(id);
+            JTUser user = await _userManager.GetUserAsync(User);
+
             if (ticket is null) return NotFound();
-            await _ticketService.ArchiveTicketAsync(ticket);
-            return RedirectToAction("Index");
+            if (IsUserAuthorizedToMakeChanges(user, ticket))
+            {
+
+                await _ticketService.ArchiveTicketAsync(ticket);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpGet]
-        [Authorize("Admin,ProjectManager")]
-
         public async Task<IActionResult> ArchiveTicket(int? id)
         {
 
@@ -237,8 +268,16 @@ namespace JATS.Controllers
 
                 return NotFound();
 
-
-            return View(await _ticketService.GetTicketByIdAsync(id.Value));
+            JTUser user = await _userManager.GetUserAsync(User);
+            var ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+            if (IsUserAuthorizedToMakeChanges(user, ticket))
+            {
+                return View(ticket);
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
 
@@ -270,7 +309,7 @@ namespace JATS.Controllers
             AssignTechnicianViewModel model = new();
             model.Ticket = await _ticketService.GetTicketByIdAsync(ticketId);
 
-            if (model.Ticket.isPrimordial == true)
+            if (model.Ticket.Project.isPrimordial == true)
             {
                 List<JTUser> users = _context
                     .Users.Where(u => u.CompanyId == User.Identity.GetCompanyId().Value).ToList();
@@ -279,7 +318,16 @@ namespace JATS.Controllers
             }
             else
             {
-                model.Technicians = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(Roles.Technician)), "Id", "FullName");
+
+                JTUser user = await _userManager.GetUserAsync(User);
+                if (IsUserAuthorizedToMakeChanges(user, model.Ticket))
+                {
+                    model.Technicians = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(Roles.Technician)), "Id", "FullName");
+                }
+                else
+                {
+                    return Unauthorized();
+                }
             }
 
 
@@ -292,11 +340,15 @@ namespace JATS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignTechnician(AssignTechnicianViewModel viewModel)
         {
+            JTUser user = await _userManager.GetUserAsync(User);
+            Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(viewModel.Ticket.Id);
+            if (!IsUserAuthorizedToMakeChanges(user, oldTicket))
+            {
+                return Unauthorized();
+            }
 
             if (viewModel.TechnicianId != null)
             {
-                JTUser user = await _userManager.GetUserAsync(User);
-                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(viewModel.Ticket.Id);
                 try
                 {
                     await _ticketService.AssignTicketAsync(viewModel.Ticket.Id, viewModel.TechnicianId);
@@ -352,11 +404,19 @@ namespace JATS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddTicketComment([Bind("Id,TicketId,Comment,UserId,Created")] TicketComment ticketComment)
         {
+            JTUser user = await _userManager.GetUserAsync(User);
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(ticketComment.TicketId);
+
+            if (!IsUserAuthorizedToMakeChanges(user, ticket))
+            {
+                return Unauthorized();
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    ticketComment.UserId = _userManager.GetUserId(User);
+                    ticketComment.UserId = user.Id;
                     ticketComment.Created = DateTimeOffset.Now;
                     await _ticketService.AddTicketCommentAsync(ticketComment);
 
@@ -378,6 +438,11 @@ namespace JATS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
         {
+            JTUser user = await _userManager.GetUserAsync(User);
+            if (!IsUserAuthorizedToMakeChanges(user, ticketAttachment.Ticket))
+            {
+                return Unauthorized();
+            }
             string statusMessage;
 
             if (ModelState.IsValid && ticketAttachment.FormFile != null)
@@ -387,7 +452,7 @@ namespace JATS.Controllers
                 ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
 
                 ticketAttachment.Created = DateTimeOffset.Now;
-                ticketAttachment.UserId = _userManager.GetUserId(User);
+                ticketAttachment.UserId = user.Id;
 
                 await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
                 await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
@@ -422,6 +487,20 @@ namespace JATS.Controllers
             return (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).Any(t => t.Id == id);
         }
 
+        private bool IsUserAuthorizedToMakeChanges(JTUser user, Ticket ticket)
+        {
+            if (User.IsInRole(nameof(Roles.Admin)) ||
+                ticket.TechnicianUserId == user.Id ||
+                ticket.OwnerUserId == user.Id ||
+                ticket.Project.Members.Contains(user))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
 
 

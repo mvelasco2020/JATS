@@ -73,10 +73,5 @@ namespace JATS.Models
         public virtual ICollection<Notification>? Notifications { get; set; }
 
         public virtual ICollection<TicketHistory>? History { get; set; }
-
-
-
-
-
     }
 }
