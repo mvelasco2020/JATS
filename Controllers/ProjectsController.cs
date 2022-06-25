@@ -133,6 +133,11 @@ namespace JATS.Controllers
 
             if (model is not null)
             {
+                if (model.Project.EndDate < model.Project.StartDate)
+                {
+                    ModelState.AddModelError("Project.EndDate", "End date cannot be less than the start date");
+                    return View(model);
+                }
                 int companyId = User.Identity.GetCompanyId().Value;
                 try
                 {
@@ -143,6 +148,7 @@ namespace JATS.Controllers
 
                         model.Project.ImageFileName = model.Project.ImageFormFile.FileName;
                         model.Project.FileContentType = model.Project.ImageFormFile.ContentType;
+
                     }
 
                     model.Project.CompanyId = companyId;
@@ -161,7 +167,7 @@ namespace JATS.Controllers
                 catch (Exception)
                 {
 
-                    throw;
+                    return View("Error");
                 }
 
                 return RedirectToAction("Index");
