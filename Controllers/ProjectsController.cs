@@ -181,6 +181,15 @@ namespace JATS.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
 
+            string userId = _userManager.GetUserId(User);
+            //deny access is user is not the assigned PM and not an Admin
+            if (!(await _projectService.IsAssignedProjectManager(userId, id.Value)) &&
+                !(User.IsInRole(nameof(Roles.Admin))))
+            {
+                return View("Error");
+            }
+
+
             int companyId = User.Identity.GetCompanyId().Value;
 
             AddProjectWithPMViewModel model = new();
@@ -210,6 +219,16 @@ namespace JATS.Controllers
         [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
+
+            string userId = _userManager.GetUserId(User);
+            //deny access is user is not the assigned PM and not an Admin
+            if (!(await _projectService.IsAssignedProjectManager(userId, model.Project.Id)) &&
+                !(User.IsInRole(nameof(Roles.Admin))))
+            {
+                return View("Error");
+            }
+
+
             if (model is not null)
             {
                 int companyId = User.Identity.GetCompanyId().Value;

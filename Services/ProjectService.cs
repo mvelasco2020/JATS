@@ -285,6 +285,8 @@ namespace JATS.Services
                     .Include(u => u.Projects)
                         .ThenInclude(u => u.Tickets)
                         .ThenInclude(u => u.OwnerUser)
+                        .Include(u => u.Projects)
+                        .ThenInclude(u => u.ProjectPriority)
                     .Include(u => u.Projects)
                         .ThenInclude(u => u.Tickets)
                         .ThenInclude(u => u.TicketPriority)

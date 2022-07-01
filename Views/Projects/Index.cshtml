@@ -7,8 +7,6 @@
 @{
     ViewData["Title"] = "Projects";
 }
-
-
 <div class="row mb-4">
     <div class="col-lg-4 col-md-6 col-12 mt-4 mt-lg-0">
         <div class="card">
@@ -93,7 +91,11 @@
 
 </div>
 
-<div class="d-sm-flex justify-content-start">
+@if (User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
+{
+
+
+<div class="d-sm-flex justify-content-start mt-4">
     <div>
         <a asp-controller="Projects"
            asp-action="Create"
@@ -102,19 +104,21 @@
         </a>
     </div>
 </div>
+}
 <div class="card">
     <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
         <h6 class="h5">Active Company Projects</h6>
     </div>
     <div class="table-responsive">
-        <table class="table align-items-center mb-0" id="datatable">
+        <table class="table align-items-center" id="datatable">
             <thead>
                 <tr>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Project</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Project Manager</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Priority</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Start Date</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Completion</th>
-                    <th></th>
+
                 </tr>
             </thead>
             <tbody>
@@ -122,11 +126,45 @@
                 @foreach (var project in Model)
                 {
                     <tr>
-                        <td>
-                            <div class="d-flex px-2">
-                                <div>
-                                    <img src="https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/logos/small-logos/logo-spotify.svg" class="avatar avatar-sm rounded-circle me-2">
-                                </div>
+                           <td>
+                            <div class="d-flex justify-content-start">
+                             <div class="align-middle">
+                            <button class="btn btn-link text-secondary mb-0"
+                                data-bs-toggle="dropdown">
+                                <i class="fa fa-ellipsis-v text-xs" aria-hidden="true"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-lg-start px-2 py-3" aria-labelledby="navbarDropdownMenuLink2" data-popper-placement="left-start">
+                                <li>
+                                    <a class="dropdown-item border-radius-md"
+                                   asp-controller="Projects"
+                                   asp-action="Details"
+                                   asp-route-id="@project.Id">
+                                        Details
+                                    </a>
+                                </li>
+                                @if (User.IsInRole(nameof(Roles.Admin))
+                               || (await ProjectService.IsAssignedProjectManager(UserManager.GetUserId(User),project.Id)))
+                                {
+
+                                    <li>
+                                        <a class="dropdown-item border-radius-md"
+                                   asp-controller="Projects"
+                                   asp-action="Edit"
+                                   asp-route-id="@project.Id">
+                                            Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item border-radius-md text-info"
+                                   asp-controller="Projects"
+                                   asp-action="Restore"
+                                   asp-route-id="@project.Id">
+                                            Restore
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                                 <div class="my-auto">
                                     <a asp-action="Details" 
                                     asp-route-id="@project.Id"
@@ -136,6 +174,31 @@
                                 </div>
                             </div>
                         </td>
+                        <td>
+                            <div>
+                             
+                                @{
+                                    var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
+                                }
+                                    @if (projectManager is null)
+                                    {
+                                        <a asp-controller="projects"
+                                        asp-action="Details"
+                                        asp-route-id="@project.Id">
+                                    <h6 class="mb-0 text-xs">Unassigned</h6>
+                                        </a>
+
+                                    }
+                                    else
+                                    {
+                                    <a>
+                                    <h6 class="mb-0 text-xs">@projectManager.FullName</h6>
+                                    </a>
+
+                                    }
+                            </div>
+                        </td>
+
                         <td>
                             <span class="badge badge-dot me-4">
                                 @switch (project.ProjectPriority.Name)
@@ -176,51 +239,13 @@
                                         * 100);
                                     }
                                 }
-                                <span class="me-2 text-xs">@value</span>
+                                <span class="me-2 text-xs">@value%</span>
                                 <div>
                                     <div class="progress">
                                         <div class="progress-bar bg-info" role="progressbar" aria-valuenow="@value" aria-valuemin="0" aria-valuemax="100" style="width: @value%;"></div>
                                     </div>
                                 </div>
                             </div>
-                        </td>
-
-                        <td class="align-middle">
-                            <button class="btn btn-link text-secondary mb-0"
-                                data-bs-toggle="dropdown">
-                                <i class="fa fa-ellipsis-v text-xs" aria-hidden="true"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-lg-start px-2 py-3" aria-labelledby="navbarDropdownMenuLink2" data-popper-placement="left-start">
-                                <li>
-                                    <a class="dropdown-item border-radius-md"
-                                   asp-controller="Projects"
-                                   asp-action="Details"
-                                   asp-route-id="@project.Id">
-                                        Details
-                                    </a>
-                                </li>
-                                @if (User.IsInRole(nameof(Roles.Admin))
-                               || User.IsInRole(nameof(Roles.ProjectManager)))
-                                {
-
-                                    <li>
-                                        <a class="dropdown-item border-radius-md"
-                                   asp-controller="Projects"
-                                   asp-action="Edit"
-                                   asp-route-id="@project.Id">
-                                            Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item border-radius-md text-danger"
-                                   asp-controller="Projects"
-                                   asp-action="Archive"
-                                   asp-route-id="@project.Id">
-                                            Archive
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
                         </td>
                     </tr>
                 }

@@ -8,135 +8,166 @@
     ViewData["Title"] = "Unassigned Projects";
 }
 
-<h1>Index</h1>
 
+<div class="row">
+    <div class="col-xl-10 mx-auto">
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Archived)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileContentType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProjectPriority)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            @if (User.IsInRole(Roles.Admin.ToString()) ||
-           (await ProjectService.GetProjectManagerAsync(item.Id))?.Id == UserManager.GetUserId(User)
-           )
-            {
-
+<div class="card">
+    <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
+        <h6 class="h5">Unassigned Company Projects</h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-items-center mb-0 display compact" id="datatable">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StartDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EndDate)
-                    </td>
-
-
-                    <td>
-                        @if (item.ImageFileData != null)
-                        {
-
-                            <img class="img-fluid img-thumbnail"
-                     style="width:100px;height:80px"
-                     src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))" />
-                        }
-
-                    <td>
-                            @Html.DisplayFor(modelItem => item.Company.Id)
-                    </td>
-                    <td>
-                            @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Archive" asp-route-id="@item.Id">Archive</a> |
-                        <a class="btn btn-primary" asp-action="AssignPM" asp-route-id="@item.Id">Assign PM</a>
-
-                    </td>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Project</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Project Manager</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Priority</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Start Date</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Completion</th>
                 </tr>
-            }
+            </thead>
+            <tbody>
 
-            else
-            {
+                @foreach (var project in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                             <div>
+                            <button class="btn btn-link text-secondary mb-0"
+                                data-bs-toggle="dropdown">
+                                <i class="fa fa-ellipsis-v text-xs" aria-hidden="true"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-lg-start px-2 py-3" aria-labelledby="navbarDropdownMenuLink2" data-popper-placement="left-start">
+                                <li>
+                                    <a class="dropdown-item border-radius-md"
+                                   asp-controller="Projects"
+                                   asp-action="Details"
+                                   asp-route-id="@project.Id">
+                                        Details
+                                    </a>
+                                </li>
+                                @if (User.IsInRole(nameof(Roles.Admin))
+                               || (await ProjectService.IsAssignedProjectManager(UserManager.GetUserId(User),project.Id)))
+                                {
 
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StartDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EndDate)
-                    </td>
+                                    <li>
+                                        <a class="dropdown-item border-radius-md"
+                                   asp-controller="Projects"
+                                   asp-action="Edit"
+                                   asp-route-id="@project.Id">
+                                            Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item border-radius-md text-info"
+                                   asp-controller="Projects"
+                                   asp-action="Restore"
+                                   asp-route-id="@project.Id">
+                                            Restore
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                                <div>
+                                    <a asp-action="Details" 
+                                    asp-route-id="@project.Id"
+                                    asp-controller="projects">
+                                    <h6 class="mb-0 text-xs">@project.Name</h6>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
 
+                                                <td>
+                            <div>
+                             
+                                @{
+                                    var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
+                                }
+                                    @if (projectManager is null)
+                                    {
+                                        <a asp-controller="projects"
+                                        asp-action="Details"
+                                        asp-route-id="@project.Id">
+                                    <h6 class="mb-0 text-xs">Unassigned</h6>
+                                        </a>
 
-                    <td>
-                        @if (item.ImageFileData != null)
-                        {
+                                    }
+                                    else
+                                    {
+                                    <a>
+                                    <h6 class="mb-0 text-xs">@projectManager.FullName</h6>
+                                    </a>
 
-                            <img class="img-fluid img-thumbnail"
-                     style="width:100px;height:80px"
-                     src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))" />
-                        }
+                                    }
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-dot me-4">
+                                @switch (project.ProjectPriority.Name)
+                                {
+                                    case ("High"):
+                                        <i class="bg-warning"></i>
+                                        break;
+                                    case ("Urgent"):
+                                        <i class="bg-danger"></i>
+                                        break;
+                                    case ("Medium"):
+                                        <i class="bg-success"></i>
+                                        break;
 
-                    <td>
-                            @Html.DisplayFor(modelItem => item.Company.Id)
-                    </td>
-                    <td>
-                            @Html.DisplayFor(modelItem => item.Archived)
-                    </td>
-                    <td>
-                            @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    </td>
-                </tr>
-            }
+                                    default:
+                                        <i class="bg-info"></i>
+                                        break;
+                                }
+                                <span class="text-dark text-xs">@project.ProjectPriority.Name</span>
+                            </span>
+                        </td>
+                        <td>
+                            <p class="text-xs font-weight-bold mb-0">@project.StartDate.ToString("MM/dd/yyyy")</p>
+                        </td>
+                        <td class="align-middle text-center">
+                            <div class="d-flex align-items-center">
+                                @{
+                                    double value;
+                                    if (project.StartDate > DateTimeOffset.UtcNow)
+                                        value = 0;
+                                    else if (project.EndDate < DateTime.Now)
+                                        value = 100;
+                                    else
+                                    {
+                                        value = Math
+                                        .Round((DateTime.Now.Subtract(project.StartDate.DateTime))
+                                        / (project.EndDate.DateTime.Subtract(project.StartDate.DateTime))
+                                        * 100);
+                                    }
+                                }
+                                <span class="me-2 text-xs">@value%</span>
+                                <div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-info" role="progressbar" aria-valuenow="@value" aria-valuemin="0" aria-valuemax="100" style="width: @value%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
 
-        }
-    </tbody>
-</table>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+    </div>
+
+</div>
+@section scripts{
+    <script>
+        const dataTableBasic = new simpleDatatables.DataTable("#datatable", {
+            searchable: true,
+            fixedHeight: true
+        });
+    </script>
+    }
