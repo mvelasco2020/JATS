@@ -110,7 +110,7 @@
         <h6 class="h5">Active Company Projects</h6>
     </div>
     <div class="table-responsive">
-        <table class="table align-items-center" id="datatable">
+        <table class="table align-items-center" id="alldatatable">
             <thead>
                 <tr>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Project</th>
@@ -286,9 +286,12 @@
 </div>
 @section scripts{
     <script>
-        const dataTableBasic = new simpleDatatables.DataTable("#datatable", {
+        const dataTableBasic = new simpleDatatables.DataTable("#alldatatable", {
             searchable: true,
-            fixedHeight: true
+               columns: [
+        // Sort the second column in ascending order
+        { select: 4, sort: "asc" },],
+        perPage: 25
         });
     </script>
     }

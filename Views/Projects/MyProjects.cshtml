@@ -290,8 +290,11 @@
 @section scripts{
     <script>
         const dataTableBasic = new simpleDatatables.DataTable("#datatable", {
-            searchable: true,
-            fixedHeight: true
+             searchable: true,
+               columns: [
+        // Sort the second column in ascending order
+        { select: 4, sort: "asc" },],
+        perPage: 25
         });
     </script>
     }
