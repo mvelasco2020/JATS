@@ -66,7 +66,7 @@ namespace JATS.Controllers
             List<Project> projects = await _projectService
                 .GetUserProjectsAsync(_userManager.GetUserId(User));
 
-            return View(projects);
+            return View(projects.Where(p => p.Archived == false));
         }
 
 

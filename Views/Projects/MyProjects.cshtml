@@ -108,7 +108,7 @@
 }
 <div class="card">
     <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
-        <h6 class="h5">My Company Projects</h6>
+        <h6 class="h5">My Projects</h6>
     </div>
     <div class="table-responsive">
         <table class="table align-items-center mb-0" id="datatable">
@@ -155,9 +155,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item border-radius-md text-danger"
-                                   asp-controller="Projects"
-                                   asp-action="Archive"
-                                   asp-route-id="@project.Id">
+                                    data-bs-toggle="modal" data-bs-target="#modal_@project.Id">
                                             Archive
                                         </a>
                                     </li>
@@ -170,6 +168,39 @@
                                     <h6 class="mb-0 text-xs">@project.Name</h6>
                                     </a>
                                 </div>
+
+                                <div class="modal fade" id="modal_@project.Id" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+                              <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h6 class="modal-title" id="modal-title-default">Confirmation</h6>
+                                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">×</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <div class="text-center">
+                                  Are you sure you want to archive this project:
+                                      </div>
+                                  <div class="text-center">
+                                  @project.Name
+                                  </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                  <form asp-action="Archive" >
+                                        <input type="hidden" 
+                                            asp-for="@(new Project().Id)" 
+                                            value="@project.Id"/>
+                                        <button type="submit" 
+                                            class="btn bg-gradient-danger">
+                                            Archive
+                                        </button>
+                                  </form>
+                                    <button type="button" class="btn btn-link ml-auto" data-bs-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                             </div>
                             </div>
                         </td>
 
