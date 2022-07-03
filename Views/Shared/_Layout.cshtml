@@ -188,14 +188,14 @@
                                     </a>
                                 </li>
                                 @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
-                                {   
-                                <li class="nav-item">
-                                    <a class="nav-link"
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link"
                                        asp-controller="projects" asp-action="create">
-                                        <span class="sidenav-mini-icon"> C </span>
-                                        <span class="sidenav-normal">Create </span>
-                                    </a>
-                                </li>
+                                            <span class="sidenav-mini-icon"> C </span>
+                                            <span class="sidenav-normal">Create </span>
+                                        </a>
+                                    </li>
                                 }
                                 <li class="nav-item">
                                     <a class="nav-link"

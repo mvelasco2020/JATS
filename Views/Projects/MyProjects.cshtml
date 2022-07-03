@@ -96,15 +96,15 @@
 {
 
 
-<div class="d-sm-flex justify-content-start mt-4">
-    <div>
-        <a asp-controller="Projects"
+    <div class="d-sm-flex justify-content-start mt-4">
+        <div>
+            <a asp-controller="Projects"
            asp-action="Create"
            class="btn btn-icon bg-gradient-primary">
-            New Project
-        </a>
+                New Project
+            </a>
+        </div>
     </div>
-</div>
 }
 <div class="card">
     <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
@@ -128,104 +128,104 @@
                     <tr>
                         <td>
                             <div class="d-flex">
-                                          <button class="btn btn-link text-secondary mb-0"
-                                data-bs-toggle="dropdown">
-                                <i class="fa fa-ellipsis-v text-xs" aria-hidden="true"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-lg-start px-2 py-3" aria-labelledby="navbarDropdownMenuLink2" data-popper-placement="left-start">
-                                <li>
-                                    <a class="dropdown-item border-radius-md"
-                                   asp-controller="Projects"
-                                   asp-action="Details"
-                                   asp-route-id="@project.Id">
-                                        Details
-                                    </a>
-                                </li>
-                                @if (User.IsInRole(nameof(Roles.Admin))
-                               || User.IsInRole(nameof(Roles.ProjectManager)))
-                                {
-
+                                <button class="btn btn-link text-secondary mb-0"
+                                    data-bs-toggle="dropdown">
+                                    <i class="fa fa-ellipsis-v text-xs" aria-hidden="true"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-lg-start px-2 py-3" aria-labelledby="navbarDropdownMenuLink2" data-popper-placement="left-start">
                                     <li>
                                         <a class="dropdown-item border-radius-md"
-                                   asp-controller="Projects"
-                                   asp-action="Edit"
-                                   asp-route-id="@project.Id">
-                                            Edit
+                                       asp-controller="Projects"
+                                       asp-action="Details"
+                                       asp-route-id="@project.Id">
+                                            Details
                                         </a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item border-radius-md text-danger"
-                                    data-bs-toggle="modal" data-bs-target="#modal_@project.Id">
-                                            Archive
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
+                                    @if (User.IsInRole(nameof(Roles.Admin))
+                                   || User.IsInRole(nameof(Roles.ProjectManager)))
+                                    {
+
+                                        <li>
+                                            <a class="dropdown-item border-radius-md"
+                                       asp-controller="Projects"
+                                       asp-action="Edit"
+                                       asp-route-id="@project.Id">
+                                                Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item border-radius-md text-danger"
+                                       data-bs-toggle="modal" data-bs-target="#modal_@project.Id">
+                                                Archive
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
                                 <div class="my-auto">
-                                    <a asp-action="Details" 
-                                    asp-route-id="@project.Id"
-                                    asp-controller="projects">
-                                    <h6 class="mb-0 text-xs">@project.Name</h6>
+                                    <a asp-action="Details"
+                                   asp-route-id="@project.Id"
+                                   asp-controller="projects">
+                                        <h6 class="mb-0 text-xs">@project.Name</h6>
                                     </a>
                                 </div>
 
                                 <div class="modal fade" id="modal_@project.Id" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
-                              <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h6 class="modal-title" id="modal-title-default">Confirmation</h6>
-                                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">×</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                      <div class="text-center">
-                                  Are you sure you want to archive this project:
-                                      </div>
-                                  <div class="text-center">
-                                  @project.Name
-                                  </div>
-                                  </div>
-                                  <div class="modal-footer">
-                                  <form asp-action="Archive" >
-                                        <input type="hidden" 
-                                            asp-for="@(new Project().Id)" 
-                                            value="@project.Id"/>
-                                        <button type="submit" 
-                                            class="btn bg-gradient-danger">
-                                            Archive
-                                        </button>
-                                  </form>
-                                    <button type="button" class="btn btn-link ml-auto" data-bs-dismiss="modal">Close</button>
-                                  </div>
+                                    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h6 class="modal-title" id="modal-title-default">Confirmation</h6>
+                                                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="text-center">
+                                                    Are you sure you want to archive this project:
+                                                </div>
+                                                <div class="text-center">
+                                                    @project.Name
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form asp-action="Archive">
+                                                    <input type="hidden"
+                                                       asp-for="@(new Project().Id)"
+                                                       value="@project.Id" />
+                                                    <button type="submit"
+                                                        class="btn bg-gradient-danger">
+                                                        Archive
+                                                    </button>
+                                                </form>
+                                                <button type="button" class="btn btn-link ml-auto" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                              </div>
-                             </div>
                             </div>
                         </td>
 
                         <td>
                             <div>
-                             
+
                                 @{
                                     var projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
                                 }
-                                    @if (projectManager is null)
-                                    {
-                                        <a asp-controller="projects"
-                                        asp-action="Details"
-                                        asp-route-id="@project.Id">
-                                    <h6 class="mb-0 text-xs">Unassigned</h6>
-                                        </a>
-
-                                    }
-                                    else
-                                    {
-                                    <a>
-                                    <h6 class="mb-0 text-xs">@projectManager.FullName</h6>
+                                @if (projectManager is null)
+                                {
+                                    <a asp-controller="projects"
+                               asp-action="Details"
+                               asp-route-id="@project.Id">
+                                        <h6 class="mb-0 text-xs">Unassigned</h6>
                                     </a>
 
-                                    }
+                                }
+                                else
+                                {
+                                    <a>
+                                        <h6 class="mb-0 text-xs">@projectManager.FullName</h6>
+                                    </a>
+
+                                }
                             </div>
                         </td>
 
@@ -279,7 +279,6 @@
                         </td>
 
                         <td class="align-middle">
-
                         </td>
                     </tr>
                 }
@@ -290,104 +289,11 @@
 @section scripts{
     <script>
         const dataTableBasic = new simpleDatatables.DataTable("#datatable", {
-             searchable: true,
-               columns: [
-        // Sort the second column in ascending order
-        { select: 4, sort: "asc" },],
-        perPage: 25
+            searchable: true,
+            columns: [
+                // Sort the second column in ascending order
+                { select: 4, sort: "asc" },],
+            perPage: 25
         });
     </script>
     }
-
-@*
-
-<h1>My Projects</h1>
-
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Archived)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileData)
-            </th>
-  
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProjectPriority)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Archived)
-            </td>
-
-            <td>
-                    @if (item.ImageFileData != null)
-                        {
-                            
-                        <img
-                    class="img-fluid img-thumbnail"
-                    style="width:100px;height:80px"
-                    src="data:image/*;base64,@(Convert.ToBase64String(item.ImageFileData))"
-                    />        
-                        }
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
-
-                @if (User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
-{
-   
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
-                <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
-}
-
-
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
-
-*@
