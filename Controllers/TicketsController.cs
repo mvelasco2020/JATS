@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using JATS.Data;
+using JATS.Extensions;
+using JATS.Models;
+using JATS.Models.Enums;
+using JATS.Models.ViewModel;
+using JATS.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using JATS.Data;
-using JATS.Models;
-using Microsoft.AspNetCore.Identity;
-using JATS.Extensions;
-using JATS.Services.Interfaces;
-using JATS.Models.Enums;
-using System.Collections;
-using Microsoft.AspNetCore.Authorization;
-using JATS.Models.ViewModel;
 
 namespace JATS.Controllers
 {
@@ -251,7 +246,7 @@ namespace JATS.Controllers
             {
 
                 await _ticketService.ArchiveTicketAsync(ticket);
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Projects", new { id = ticket.ProjectId });
             }
             else
             {
