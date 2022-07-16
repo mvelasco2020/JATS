@@ -83,7 +83,6 @@ namespace JATS.Controllers
             if (User.IsInRole(Roles.Admin.ToString()))
             {
                 ViewData["ProjectId"] = new SelectList((await _projectService.GetAllProjectsByCompany(companyId)), "Id", "Name");
-
             }
             else
             {
@@ -114,6 +113,7 @@ namespace JATS.Controllers
                     Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     await _historyService.AddHistoryAsync(null, newTicket, user.Id);
 
+                    return RedirectToAction("Details", new { id = newTicket.Id });
                 }
                 catch (Exception)
                 {
@@ -121,7 +121,6 @@ namespace JATS.Controllers
                     throw;
                 }
                 //Todo : ticket notification
-                return RedirectToAction(nameof(Index));
             }
             if (User.IsInRole(Roles.Admin.ToString()))
             {

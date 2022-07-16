@@ -32,21 +32,35 @@
     var projectTickets = Model.Tickets.Where(t => t.Archived == false);
     var ticketHistories = await TicketHistoryService.GetProjectTicketsHistoriesAsync(Model.Id, user.CompanyId);
 
+    var projectMembers = @Model.Members;
+
 }
 
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-
                 @*#### Project Details Section Start####*@
-                <h3>@Model.Name</h3>
+                <div class="d-flex justify-content-between">
+                    <h3>@Model.Name</h3>
+                    @if (User.IsInRole(Roles.Admin.ToString())
+                    || (user.Id == projectManager?.Id))
+                    {
+                        <a class="btn btn-primary align-self-center btn-sm mb-0"
+                       asp-action="edit"
+                       asp-controller="Projects"
+                       asp-route-id="@Model.Id">
+                            Edit
+                        </a>
+                    }
+
+                </div>
                 <div class="row">
                     <div class="col-12 col-md-6 text-center">
                         @if (Model.ImageFileData != null)
                         {
                             <img class="border-radius-lg shadow-lg mx-auto"
-                             style="height:100%; object-fit:cover;max-height:600px;width:100%;"
+                             style="height:100%; object-fit:cover;max-height:450px;width:100%;"
                              src="data:image/*;base64,@(Convert.ToBase64String(Model.ImageFileData))"
                              alt="project image">
                         }
@@ -54,7 +68,7 @@
                         {
 
                             <img class="border-radius-lg shadow-lg mx-auto"
-                             style="height:100%; object-fit:cover;max-height:600px;width:100%;"
+                             style="height:100%; object-fit:cover;max-height:450px;width:100%;"
                              src="https://www.cio.com/wp-content/uploads/2021/12/project_management-100536263-orig.jpg?quality=50&strip=all"
                              alt="project image">
                         }
@@ -107,17 +121,17 @@
                         <p>
                             @Model.Description
                         </p>
-                        <div class="row mt-4">
-                            <div class="col-lg-4 mt-lg-0 mt-2">
+                        <div class="row mt-2">
+                            <div class="col-6 mt-lg-0 mt-2">
                                 <label>Start Date</label>
                                 @Model.StartDate.ToString("MM/dd/yyyy")
                             </div>
-                            <div class="col-lg-4 mt-lg-0 mt-2">
+                            <div class="col-6 mt-lg-0 mt-2">
                                 <label>End Date</label>
                                 @Model.EndDate.ToString("MM/dd/yyyy")
                             </div>
                         </div>
-                        <div class="row mt-4">
+                        <div class="row mt-3">
                             <h6>Project Manager</h6>
                             <div>
                                 @if (projectManager is not null)
@@ -125,13 +139,13 @@
                                     <div class="d-flex">
                                         @if (projectManager.AvatarData is not null)
                                         {
-                                            <img class="rounded-circle"
+                                            <img class="rounded-circle border border-primary"
                                          style="width:50p;height:50px;"
                                          src="data:image/*;base64,@Convert.ToBase64String(projectManager.AvatarData)" />
                                         }
                                         else
                                         {
-                                            <img class="rounded-circle"
+                                            <img class="rounded-circle border border-primary"
                                          style="width:50p;height:50px;"
                                          src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" />
 
@@ -140,14 +154,14 @@
                                             <span>
                                                 @projectManager.FullName
                                             </span>
-                                            <div class="small">@projectManager.Email</div>
+                                            <div style="font-size: .8rem;">@projectManager.Email</div>
                                         </div>
                                     </div>
                                 }
                                 else
                                 {
                                     <div class="d-flex mb-2">
-                                        <img class="rounded-circle me-2"
+                                        <img class="rounded-circle me-2 border border-primary"
                                          style="width:40p;height:40px;"
                                          src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" />
                                         <h6>Not Assigned</h6>
@@ -164,60 +178,71 @@
                                 }
                             </div>
                         </div>
+                        @*## Team Members ##*@
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h6>Project Members:</h6>
+                                <div class="d-flex overflow-auto">
+                                    @if (User.IsInRole(Roles.Admin.ToString())
+                                    || (user.Id == projectManager?.Id))
+                                    {
+                                        <div class="text-center">
+                                            <a asp-action="AssignMembers"
+                                           asp-controller="Projects"
+                                           asp-route-id="@Model.Id"
+                                           class="avatar border-1 rounded-circle bg-gradient-primary">
+                                                <i class="fas fa-plus text-white"></i>
+                                            </a>
+                                        </div>
+                                    }
+                                    @if (projectMembers.Count() > 1)
+                                    {
+
+                                        @foreach (var member in @projectMembers)
+                                        {
+                                            <div class="text-center ms-1">
+                                                <a href="javascript:;"
+                                           class="avatar rounded-circle border border-primary">
+                                                    @if (member?.AvatarData != null)
+                                                    {
+                                                        <img alt="Image placeholder"
+                                                 class="p-1"
+                                                 src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarData))" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                                                 alt="Image placeholder"
+                                                 class="p-1" />
+                                                    }
+
+
+
+                                                </a>
+                                                <p class="mb-0"
+                                           style="font-size: .8rem;">@member.FirstName @member.LastName[0]</p>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div>
+                                            <p class="text-center">
+                                                No Members
+                                            </p>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+
+                        </div>
                         @*## Project Descriptions End##*@
                     </div>
 
                 </div>
-                @*## Team Members ##*@
-                <div class="row justify-content-end ">
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div>
-                            <div class="card-body">
-                                <div style="overflow-x:none;max-height:400px;">
-                                    <h6>Project Team Members</h6>
-                                    <ul class="list-unstyled mb-0">
-                                        @* Logic for avatars *@
-                                        @foreach (var member in (await ProjectService.GetAllProjectMembersExceptPMAsync(Model.Id)))
-                                        {
-                                            <li class="mt-2">
-                                                <a href="">
-                                                    <div class="d-flex align-items-center">
-                                                        @if (member.AvatarData is not null)
-                                                        {
-                                                            <img class=""
-                                                         style="width:40p;height:40px;"
-                                                         src="data:image/*;base64,@Convert.ToBase64String(member.AvatarData)" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <img class="rounded-circle"
-                                                         style="width:40p;height:40px;"
-                                                         src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" />
 
-                                                        }
-                                                        <div class="ms-1">
-                                                            <span>@member.FirstName @member.LastName[0]</span>.
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                        }
-                                    </ul>
-                                    @if (User.IsInRole(Roles.Admin.ToString())
-                                    || (user.Id == projectManager?.Id))
-                                    {
-                                        <a class="btn btn-primary mt-2"
-                                       asp-action="AssignMembers"
-                                       asp-controller="Projects"
-                                       asp-route-id="@Model.Id">
-                                            Manage Team
-                                        </a>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -277,8 +302,14 @@
     <div class="col-12 col-md-8">
         <div class="card">
             <div class="card-body">
-
-                <h5 class="ms-3">Project Tickets</h5>
+                <div class="d-flex justify-content-between">
+                    <h5 class="ms-3">Project Tickets</h5>
+                    <a class="btn btn-primary btn-sm"
+                       asp-controller="Tickets"
+                       asp-action="Create">
+                        New Ticket
+                    </a>
+                </div>
                 <div class="table table-responsive">
                     <table class="table align-items-center mb-0" id="alldatatable">
                         <thead>
@@ -435,7 +466,8 @@
             <div class="card-header pb-0">
                 <h6>Project Timeline</h6>
             </div>
-            <div class="card-body pt-0">
+            <div class="card-body pt-0 overflow-auto"
+                 style="max-height: 1935px;">
 
 
                 @if (ticketHistories.Count == 0)
@@ -450,7 +482,7 @@
                 {
                     <div class="timeline timeline-one-side" data-timeline-axis-style="dotted">
 
-                        @foreach (var history in ticketHistories)
+                        @foreach (var history in ticketHistories.OrderByDescending(h => h.Created))
                         {
                             <div class="timeline-block mb-3">
                                 <span class="timeline-step">
