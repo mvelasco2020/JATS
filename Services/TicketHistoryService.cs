@@ -144,7 +144,7 @@ namespace JATS.Services
             {
                 Ticket ticket = await _context.Tickets.FindAsync(ticketId);
                 string description = model.ToLower().Replace("Ticket", "");
-                description = $"New {description} add to ticket: {ticket.Title}";
+                description = $"New {description} has been added to ticket: {ticket.Title}";
 
                 TicketHistory history = new()
                 {

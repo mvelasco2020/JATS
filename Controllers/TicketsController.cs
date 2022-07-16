@@ -151,7 +151,7 @@ namespace JATS.Controllers
             JTUser user = _userManager.GetUserAsync(User).Result;
 
 
-            if (IsUserAuthorizedToMakeChanges(user, ticket))
+            if (await IsUserAuthorizedToMakeChanges(user, ticket))
             {
 
                 if (ticket == null)
@@ -189,7 +189,7 @@ namespace JATS.Controllers
                 JTUser user = await _userManager.GetUserAsync(User);
                 Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
 
-                if (IsUserAuthorizedToMakeChanges(user, ticket))
+                if (await IsUserAuthorizedToMakeChanges(user, oldTicket))
                 {
                     try
                     {
@@ -211,7 +211,7 @@ namespace JATS.Controllers
                     Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
 
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Details), new { id = id });
                 }
                 else
                 {
@@ -242,7 +242,7 @@ namespace JATS.Controllers
             JTUser user = await _userManager.GetUserAsync(User);
 
             if (ticket is null) return NotFound();
-            if (IsUserAuthorizedToMakeChanges(user, ticket))
+            if (await IsUserAuthorizedToMakeChanges(user, ticket))
             {
 
                 await _ticketService.ArchiveTicketAsync(ticket);
@@ -265,7 +265,7 @@ namespace JATS.Controllers
 
             JTUser user = await _userManager.GetUserAsync(User);
             var ticket = await _ticketService.GetTicketByIdAsync(id.Value);
-            if (IsUserAuthorizedToMakeChanges(user, ticket))
+            if (await IsUserAuthorizedToMakeChanges(user, ticket))
             {
                 return View(ticket);
             }
@@ -315,7 +315,7 @@ namespace JATS.Controllers
             {
 
                 JTUser user = await _userManager.GetUserAsync(User);
-                if (IsUserAuthorizedToMakeChanges(user, model.Ticket))
+                if (await IsUserAuthorizedToMakeChanges(user, model.Ticket))
                 {
                     model.Technicians = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(Roles.Technician)), "Id", "FullName");
                 }
@@ -337,7 +337,7 @@ namespace JATS.Controllers
         {
             JTUser user = await _userManager.GetUserAsync(User);
             Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(viewModel.Ticket.Id);
-            if (!IsUserAuthorizedToMakeChanges(user, oldTicket))
+            if (!await IsUserAuthorizedToMakeChanges(user, oldTicket))
             {
                 return Unauthorized();
             }
@@ -402,7 +402,7 @@ namespace JATS.Controllers
             JTUser user = await _userManager.GetUserAsync(User);
             Ticket ticket = await _ticketService.GetTicketByIdAsync(ticketComment.TicketId);
 
-            if (!IsUserAuthorizedToMakeChanges(user, ticket))
+            if (!await IsUserAuthorizedToMakeChanges(user, ticket))
             {
                 return Unauthorized();
             }
@@ -434,7 +434,7 @@ namespace JATS.Controllers
         public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
         {
             JTUser user = await _userManager.GetUserAsync(User);
-            if (!IsUserAuthorizedToMakeChanges(user, ticketAttachment.Ticket))
+            if (!await IsUserAuthorizedToMakeChanges(user, ticketAttachment.Ticket))
             {
                 return Unauthorized();
             }
@@ -482,12 +482,14 @@ namespace JATS.Controllers
             return (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).Any(t => t.Id == id);
         }
 
-        private bool IsUserAuthorizedToMakeChanges(JTUser user, Ticket ticket)
+        private async Task<bool> IsUserAuthorizedToMakeChanges(JTUser user, Ticket ticket)
         {
+            var isPm = await _projectService.IsAssignedProjectManager(user.Id, ticket.ProjectId);
             if (User.IsInRole(nameof(Roles.Admin)) ||
                 ticket.TechnicianUserId == user.Id ||
                 ticket.OwnerUserId == user.Id ||
-                ticket.Project.Members.Contains(user))
+                ticket.Project.Members.Contains(user) ||
+                isPm == true)
             {
                 return true;
             }
