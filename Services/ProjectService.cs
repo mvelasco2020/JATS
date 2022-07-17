@@ -437,9 +437,18 @@ namespace JATS.Services
             }
         }
 
-        public async Task UpdateProjectAsync(Project project)
+        public async Task UpdateProjectAsync(Project proj)
         {
-            _context.Update(project);
+            var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == proj.Id);
+
+            project.Name = proj.Name;
+            project.Description = proj.Description;
+            project.StartDate = proj.StartDate;
+            project.EndDate = proj.EndDate;
+            project.ProjectPriority = proj.ProjectPriority;
+            project.FileContentType = proj.FileContentType;
+            project.ImageFileName = proj.ImageFileName;
+            project.ImageFileData = proj.ImageFileData;
             await _context.SaveChangesAsync();
         }
 

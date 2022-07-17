@@ -211,9 +211,6 @@ namespace JATS.Controllers
             return View(model);
         }
 
-        // POST: Projects/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,ProjectManager")]
@@ -221,7 +218,7 @@ namespace JATS.Controllers
         {
 
             string userId = _userManager.GetUserId(User);
-            //deny access is user is not the assigned PM and not an Admin
+            //deny access if user is not the assigned PM and not an Admin
             if (!(await _projectService.IsAssignedProjectManager(userId, model.Project.Id)) &&
                 !(User.IsInRole(nameof(Roles.Admin))))
             {
@@ -253,11 +250,10 @@ namespace JATS.Controllers
                 }
                 catch (Exception)
                 {
-
                     throw;
                 }
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = model.Project.Id });
             }
 
             return View(model);
