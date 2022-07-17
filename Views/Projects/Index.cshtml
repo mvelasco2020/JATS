@@ -6,9 +6,13 @@
 
 @{
     ViewData["Title"] = "Projects";
+    var upCommingProjects = Model.Where(p => p.StartDate > DateTime.Now).Count();
+    var inProgressProjects = Model.Where(p => p.StartDate < DateTime.Now || p.EndDate > DateTime.Now && p.Archived == false).Count();
+    var completedProjects = Model.Where(p => p.EndDate < DateTime.Now).Count();
+    var archivedProjects = Model.Where(p => p.Archived == true).Count();
 }
 <div class="row mb-4">
-    <div class="col-lg-4 col-md-6 col-12 mt-4 mt-lg-0">
+    <div class="col-md-4 col-lg-2 col-12 mt-4 mt-lg-0">
         <div class="card">
             <div class="card-body p-3">
                 <div class="d-flex">
@@ -29,7 +33,9 @@
                 </div>
             </div>
         </div>
-        <div class="card mt-4">
+    </div>
+    <div class="col-md-4 col-lg-2 col-12 mt-4 mt-lg-0">
+        <div class="card">
             <div class="card-body p-3">
                 <div class="d-flex">
                     <div>
@@ -50,7 +56,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 col-md-6 col-12 mt-4 mt-lg-0">
+    <div class="col-md-4 col-lg-2  col-12 mt-4 mt-lg-0">
         <div class="card">
             <div class="card-body p-3">
                 <div class="d-flex">
@@ -71,7 +77,9 @@
                 </div>
             </div>
         </div>
-        <div class="card mt-4">
+    </div>
+    <div class="col-md-4 col-lg-2 col-xl-3 col-12 mt-4 mt-lg-0">
+        <div class="card">
             <div class="card-body p-3">
                 <div class="d-flex">
                     <div>
@@ -88,6 +96,18 @@
                             </h5>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-4 col-xl-3 col-12 mt-4 mt-lg-0">
+        <div class="card z-index-2">
+            <div class="card-header p-3 pb-0">
+                <h6>Projects Status</h6>
+            </div>
+            <div class="card-body p-3">
+                <div class="chart">
+                    <canvas id="projstat-chart" class="chart-canvas" height="200"></canvas>
                 </div>
             </div>
         </div>
@@ -111,7 +131,7 @@
 }
 <div class="card">
     <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
-        <h6 class="h5">Active Company Projects</h6>
+        <h4>Company Projects</h4>
     </div>
     <div class="table-responsive">
         <table class="table align-items-center" id="alldatatable">
@@ -300,4 +320,64 @@
             perPage: 25
         });
     </script>
+
+
+    <script>
+        const ctxproj = document.getElementById("projstat-chart").getContext("2d");
+        new Chart(ctxproj, {
+            type: "pie",
+            data: {
+                labels: ['Upcomming', 'Completed', 'Archived', 'Inprogress'],
+                datasets: [{
+                    label: "Projects",
+                    weight: 9,
+                    cutout: 0,
+                    tension: 0.9,
+                    pointRadius: 2,
+                    borderWidth: 2,
+                    backgroundColor: ['#bfaadb', '#368e8f', '#de425b', '#27598f'],
+                    data: [@upCommingProjects, @completedProjects, @archivedProjects, @inProgressProjects],
+                    fill: false
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                        },
+                        ticks: {
+                            display: false,
+                        }
+                    },
+                },
+            },
+        });
+    </script>
+
     }

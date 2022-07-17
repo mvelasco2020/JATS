@@ -133,7 +133,7 @@ namespace JATS.Services
         {
             List<Project> projects = await _context
                 .Projects
-                .Where(p => p.CompanyId == companyId && p.Archived == false)
+                .Where(p => p.CompanyId == companyId)
                 .Include(p => p.Members)
                 .Include(p => p.Tickets)
                     .ThenInclude(t => t.Comments)
