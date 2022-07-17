@@ -445,7 +445,7 @@ namespace JATS.Services
             project.Description = proj.Description;
             project.StartDate = proj.StartDate;
             project.EndDate = proj.EndDate;
-            project.ProjectPriority = proj.ProjectPriority;
+            project.ProjectPriorityId = proj.ProjectPriorityId;
             project.FileContentType = proj.FileContentType;
             project.ImageFileName = proj.ImageFileName;
             project.ImageFileData = proj.ImageFileData;
