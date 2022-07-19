@@ -17,409 +17,413 @@
     var resolved = await TicketService.GetAllTicketsByStatusAsync(Model.Id, TicketStatusEnum.Resolved.ToString());
 }
 
+<div class="container">
 
-@*Current User*@
-<div class="container-fluid">
-    <div class="page-header min-height-300 border-radius-xl mt-4"
-         style="background-image: url('img/curved-images/curved0.jpg');background-position-y: 50%; background-size:cover">
-        <span class="mask bg-gradient-primary opacity-6"></span>
-    </div>
-    <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
-        <div class="row gx-4">
-            <div class="col-auto">
-                <div class="avatar avatar-xl position-relative">
+    @*Current User*@
+    <div class="container-fluid">
+        <div class="page-header min-height-300 border-radius-xl mt-4"
+             style="background-image: url('img/curved-images/curved0.jpg');background-position-y: 50%; background-size:cover">
+            <span class="mask bg-gradient-primary opacity-6"></span>
+        </div>
+        <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
+            <div class="row gx-4">
+                <div class="col-auto">
+                    <div class="avatar avatar-xl position-relative">
 
-                    @if (user?.AvatarData != null)
-                    {
-
-                        <img class="w-100 border-radius-lg shadow-sm"
-                         alt="profile_image"
-                         src="data:image/*;base64,@(Convert.ToBase64String(user.AvatarData))" />
-                    }
-                    else
-                    {
-                        <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
-                         alt="profile_image"
-                         class="w-100 border-radius-lg shadow-sm" />
-                    }
-                </div>
-            </div>
-            <div class="col-auto my-auto">
-                <div class="h-100">
-                    <h5 class="mb-1">@user.FullName</h5>
-                    <p class="mb-0 font-weight-bold text-sm">
-                        @foreach (var role in roles)
+                        @if (user?.AvatarData != null)
                         {
-                            <span>@role</span>
+
+                            <img class="w-100 border-radius-lg shadow-sm"
+                             alt="profile_image"
+                             src="data:image/*;base64,@(Convert.ToBase64String(user.AvatarData))" />
                         }
-                    </p>
+                        else
+                        {
+                            <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                             alt="profile_image"
+                             class="w-100 border-radius-lg shadow-sm" />
+                        }
+                    </div>
+                </div>
+                <div class="col-auto my-auto">
+                    <div class="h-100">
+                        <h5 class="mb-1">@user.FullName</h5>
+                        <p class="mb-0 font-weight-bold text-sm">
+                            @foreach (var role in roles)
+                            {
+                                <span>@role</span>
+                            }
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-@*Current User*@
-
-<div class="container-fluid py-4">
-
-    @*Team members*@
-    <div class="row">
-        <div class="col-12">
-            <div class="card overflow-auto">
-
-                <div class="card-body d-flex">
-
-                    @if (User.IsInRole(JATS.Models.Enums.Roles.Admin.ToString()))
-                    {
-
-                        <div class="col-lg-1 col-md-2 col-sm-3 col-4 text-center">
-                            <a href="javascript:;"
-                           class="avatar avatar-lg border-1 rounded-circle bg-gradient-primary">
-                                <i class="fas fa-plus text-white"></i>
-                            </a>
-                            <p class="mb-0 text-sm" style="margin-top: 6px">Add A Member</p>
-                        </div>
-                    }
-
-                    @foreach (var member in @Model.Members)
-                    {
-                        <div class="col-lg-1 col-md-2 col-sm-3 col-4 text-center">
-                            <a href="javascript:;"
-                           class="avatar avatar-lg rounded-circle border border-primary">
 
 
-                                @if (member?.AvatarData != null)
-                                {
+    <div class="container-fluid py-4">
 
-                                    <img alt="Image placeholder"
-                                 class="p-1"
-                                 src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarData))" />
-                                }
-                                else
-                                {
-                                    <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
-                                 alt="Image placeholder"
-                                 class="p-1" />
-                                }
+        @*Team members*@
+        <div class="row">
+            <div class="col-12">
+                <div class="card overflow-auto">
+
+                    <div class="card-body d-flex">
+
+                        @if (User.IsInRole(JATS.Models.Enums.Roles.Admin.ToString()))
+                        {
+
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-4 text-center">
+                                <a href="javascript:;"
+                               class="avatar avatar-lg border-1 rounded-circle bg-gradient-primary">
+                                    <i class="fas fa-plus text-white"></i>
+                                </a>
+                                <p class="mb-0 text-sm" style="margin-top: 6px">Add A Member</p>
+                            </div>
+                        }
+
+                        @foreach (var member in @Model.Members)
+                        {
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-4 text-center">
+                                <a href="javascript:;"
+                               class="avatar avatar-lg rounded-circle border border-primary">
 
 
+                                    @if (member?.AvatarData != null)
+                                    {
 
-                            </a>
-                            <p class="mb-0 text-sm">@member.FirstName @member.LastName[0]</p>
-                        </div>
-                    }
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-    @*Company and Project/tickets info*@
-    <div class="row mt-4">
-        @*Left Column*@
-        @*Proj and Ticket numbers*@
-        <div class="col-12 col-lg-4">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card" style="background-image: url('img/curved-images/white-curved.jpg');  background-size:cover;">
-                        <span class="mask bg-gradient-dark opacity-2 border-radius-xl"></span>
-                        <div class="card-body p-3 position-relative">
-                            <div class="row">
-                                <div class="col-8 text-start">
-                                    <div class="icon icon-shape bg-white shadow text-center border-radius-md">
-                                        <i class="ni ni-building text-dark text-gradient text-lg opacity-10" aria-hidden="true"></i>
-                                    </div>
-                                    <a asp-controller="Projects"
-                                       asp-action="Index">
-                                        <h5 class="text-white font-weight-bolder mb-0 mt-3">
-                                            @Model.Projects.Count
-                                        </h5>
-                                    </a>
-                                    <span class="text-white text-sm">Total Projects</span>
-                                </div>
-                                <div class="col-4">
-                                    <div class="dropdown text-end mb-5">
-                                        <a href="javascript:;" class="cursor-pointer" id="dropdownUsers1" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa fa-ellipsis-h text-white"></i>
-                                        </a>
-                                        <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownUsers1">
-                                            <li><a class="dropdown-item border-radius-md" asp-controller="Projects" asp-action="Index">View All Projects</a></li>
-                                        </ul>
-                                    </div>
-                                    <p class="text-white text-sm text-end mt-auto mb-0">Completed</p>
-                                    @{
-                                        var projectsCompleted = (await ProjectService.GetAllProjectsByCompany(user.CompanyId))
-                                        .Where(p => p.EndDate <= DateTimeOffset.Now).ToList();
+                                        <img alt="Image placeholder"
+                                     class="p-1"
+                                     src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarData))" />
+                                    }
+                                    else
+                                    {
+                                        <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                                     alt="Image placeholder"
+                                     class="p-1" />
                                     }
 
-                                    <p class="text-white text-sm text-end font-weight-bolder mt-auto mb-0">@projectsCompleted.Count</p>
-                                </div>
+
+
+                                </a>
+                                <p class="mb-0 text-sm">@member.FirstName @member.LastName[0]</p>
                             </div>
-                        </div>
+                        }
+
+
                     </div>
                 </div>
             </div>
-
-            <div class="row mt-3">
-                <div class="col-12">
-                    <div class="card" style="background-image: url('img/curved-images/white-curved.jpg'); background-size:cover">
-                        <span class="mask bg-gradient-dark opacity-4 border-radius-xl"></span>
-                        <div class="card-body p-3 position-relative">
-                            <div class="row">
-                                <div class="col-8 text-start">
-                                    <div class="icon icon-shape bg-white shadow text-center border-radius-md">
-                                        <i class="ni ni-settings text-dark text-gradient text-lg opacity-10" aria-hidden="true"></i>
-                                    </div>
-                                    <a asp-action="Index"
-                                       asp-controller="Tickets">
-                                        <h5 class="text-white font-weight-bolder mb-0 mt-3">
-                                            @tickets.Count()
-                                        </h5>
-                                    </a>
-                                    <span class="text-white text-sm">Total Tickets</span>
-                                </div>
-                                <div class="col-4">
-                                    <div class="dropdown text-end mb-5">
-                                        <a href="javascript:;" class="cursor-pointer" id="dropdownUsers1" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa fa-ellipsis-h text-white"></i>
+        </div>
+        @*Company and Project/tickets info*@
+        <div class="row mt-4">
+            @*Left Column*@
+            @*Proj and Ticket numbers*@
+            <div class="col-12 col-lg-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card" style="background-image: url('img/curved-images/white-curved.jpg');  background-size:cover;">
+                            <span class="mask bg-gradient-dark opacity-2 border-radius-xl"></span>
+                            <div class="card-body p-3 position-relative">
+                                <div class="row">
+                                    <div class="col-8 text-start">
+                                        <div class="icon icon-shape bg-white shadow text-center border-radius-md">
+                                            <i class="ni ni-building text-dark text-gradient text-lg opacity-10" aria-hidden="true"></i>
+                                        </div>
+                                        <a asp-controller="Projects"
+                                           asp-action="Index">
+                                            <h5 class="text-white font-weight-bolder mb-0 mt-3">
+                                                @Model.Projects.Count
+                                            </h5>
                                         </a>
-                                        <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownUsers1">
-                                            <li><a class="dropdown-item border-radius-md" asp-action="Index" asp-controller="Tickets">View All Tickets</a></li>
-                                        </ul>
+                                        <span class="text-white text-sm">Total Projects</span>
                                     </div>
-                                    <p class="text-white text-sm text-end mt-auto mb-0">Resolved</p>
-                                    <p class="text-white text-sm text-end font-weight-bolder mt-auto mb-0">@resolved.Count</p>
+                                    <div class="col-4">
+                                        <div class="dropdown text-end mb-5">
+                                            <a href="javascript:;" class="cursor-pointer" id="dropdownUsers1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-ellipsis-h text-white"></i>
+                                            </a>
+                                            <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownUsers1">
+                                                <li><a class="dropdown-item border-radius-md" asp-controller="Projects" asp-action="Index">View All Projects</a></li>
+                                            </ul>
+                                        </div>
+                                        <p class="text-white text-sm text-end mt-auto mb-0">Completed</p>
+                                        @{
+                                            var projectsCompleted = (await ProjectService.GetAllProjectsByCompany(user.CompanyId))
+                                            .Where(p => p.EndDate <= DateTimeOffset.Now).ToList();
+                                        }
+
+                                        <p class="text-white text-sm text-end font-weight-bolder mt-auto mb-0">@projectsCompleted.Count</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
-        @*Proj and Ticket numbers*@
-
-        @*Company Info*@
-        <div class="col-12 col-lg-4 col-xl-4 mt-4 mt-lg-0">
-            <div class="card h-100">
-                <div class="card-header pb-0 p-3">
-                    <div class="row">
-                        <div class="col-md-8 d-flex align-items-center">
-                            <h6 class="mb-0">Company Information</h6>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <a href="javascript:;">
-                                <i class="fas fa-user-edit text-secondary text-sm"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-placement="top"
-                                   title="Edit Profile"></i>
-                            </a>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card" style="background-image: url('img/curved-images/white-curved.jpg'); background-size:cover">
+                            <span class="mask bg-gradient-dark opacity-4 border-radius-xl"></span>
+                            <div class="card-body p-3 position-relative">
+                                <div class="row">
+                                    <div class="col-8 text-start">
+                                        <div class="icon icon-shape bg-white shadow text-center border-radius-md">
+                                            <i class="ni ni-settings text-dark text-gradient text-lg opacity-10" aria-hidden="true"></i>
+                                        </div>
+                                        <a asp-action="Index"
+                                           asp-controller="Tickets">
+                                            <h5 class="text-white font-weight-bolder mb-0 mt-3">
+                                                @tickets.Count()
+                                            </h5>
+                                        </a>
+                                        <span class="text-white text-sm">Total Tickets</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="dropdown text-end mb-5">
+                                            <a href="javascript:;" class="cursor-pointer" id="dropdownUsers1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-ellipsis-h text-white"></i>
+                                            </a>
+                                            <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownUsers1">
+                                                <li><a class="dropdown-item border-radius-md" asp-action="Index" asp-controller="Tickets">View All Tickets</a></li>
+                                            </ul>
+                                        </div>
+                                        <p class="text-white text-sm text-end mt-auto mb-0">Resolved</p>
+                                        <p class="text-white text-sm text-end font-weight-bolder mt-auto mb-0">@resolved.Count</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-3">
-                    <p class="text-sm">
-                        @Model.Description
-                    </p>
-                    <hr class="horizontal gray-light my-4" />
-                    <ul class="list-group">
-                        <li class="list-group-item border-0 ps-0 pt-0 text-sm">
-                            <strong class="text-dark">Name</strong> &nbsp; @Model.Name
-                        </li>
-                        <li class="list-group-item border-0 ps-0 text-sm">
-                            <strong class="text-dark">Mobile:</strong> &nbsp; Company phonenumber
-                        </li>
-                        <li class="list-group-item border-0 ps-0 text-sm">
-                            <strong class="text-dark">Email:</strong> &nbsp;
-                            <a href="mailto:@user.Email"
-                               class="__cf_email__">@user.Email</a>
-                        </li>
-                        <li class="list-group-item border-0 ps-0 text-sm">
-                            <strong class="text-dark">Location:</strong> &nbsp; USA
-                        </li>
-                        <li class="list-group-item border-0 ps-0 pb-0">
-                            <strong class="text-dark text-sm">Social:</strong> &nbsp;
-                            <a class="btn btn-facebook btn-simple mb-0 ps-1 pe-2 py-0"
-                               href="javascript:;">
-                                <i class="fab fa-facebook fa-lg"></i>
-                            </a>
-                            <a class="btn btn-twitter btn-simple mb-0 ps-1 pe-2 py-0"
-                               href="javascript:;">
-                                <i class="fab fa-twitter fa-lg"></i>
-                            </a>
-                            <a class="btn btn-instagram btn-simple mb-0 ps-1 pe-2 py-0"
-                               href="javascript:;">
-                                <i class="fab fa-instagram fa-lg"></i>
-                            </a>
-                        </li>
-                    </ul>
+
+            </div>
+            @*Proj and Ticket numbers*@
+
+            @*Company Info*@
+            <div class="col-12 col-lg-4 col-xl-4 mt-4 mt-lg-0">
+                <div class="card h-100">
+                    <div class="card-header pb-0 p-3">
+                        <div class="row">
+                            <div class="col-md-8 d-flex align-items-center">
+                                <h6 class="mb-0">Company Information</h6>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <a href="javascript:;">
+                                    <i class="fas fa-user-edit text-secondary text-sm"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       title="Edit Profile"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <p class="text-sm">
+                            @Model.Description
+                        </p>
+                        <hr class="horizontal gray-light my-4" />
+                        <ul class="list-group">
+                            <li class="list-group-item border-0 ps-0 pt-0 text-sm">
+                                <strong class="text-dark">Name</strong> &nbsp; @Model.Name
+                            </li>
+                            <li class="list-group-item border-0 ps-0 text-sm">
+                                <strong class="text-dark">Mobile:</strong> &nbsp; Company phonenumber
+                            </li>
+                            <li class="list-group-item border-0 ps-0 text-sm">
+                                <strong class="text-dark">Email:</strong> &nbsp;
+                                <a href="mailto:@user.Email"
+                                   class="__cf_email__">@user.Email</a>
+                            </li>
+                            <li class="list-group-item border-0 ps-0 text-sm">
+                                <strong class="text-dark">Location:</strong> &nbsp; USA
+                            </li>
+                            <li class="list-group-item border-0 ps-0 pb-0">
+                                <strong class="text-dark text-sm">Social:</strong> &nbsp;
+                                <a class="btn btn-facebook btn-simple mb-0 ps-1 pe-2 py-0"
+                                   href="javascript:;">
+                                    <i class="fab fa-facebook fa-lg"></i>
+                                </a>
+                                <a class="btn btn-twitter btn-simple mb-0 ps-1 pe-2 py-0"
+                                   href="javascript:;">
+                                    <i class="fab fa-twitter fa-lg"></i>
+                                </a>
+                                <a class="btn btn-instagram btn-simple mb-0 ps-1 pe-2 py-0"
+                                   href="javascript:;">
+                                    <i class="fab fa-instagram fa-lg"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        @*User Info*@
-        @*Left Column*@
+            @*User Info*@
+            @*Left Column*@
 
-        @*Right Column*@
-        <div class="col-12 col-lg-4 col-xl-4 mt-4 mt-lg-0">
-            @*Coversations*@
+            @*Right Column*@
+            <div class="col-12 col-lg-4 col-xl-4 mt-4 mt-lg-0">
+                @*Coversations*@
+                <div class="card">
+                    <div class="card-header pb-0 p-3">
+                        <h6 class="mb-0">Conversations</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <ul class="list-group">
+                            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+                                <div class="avatar me-3">
+                                    <img src="../../../assets/img/kal-visuals-square.jpg"
+                                         alt="kal"
+                                         class="border-radius-lg shadow" />
+                                </div>
+                                <div class="d-flex align-items-start flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">Sophie B.</h6>
+                                    <p class="mb-0 text-xs">Hi! I need more information..</p>
+                                </div>
+                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
+                                   href="javascript:;">Reply</a>
+                            </li>
+                            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+                                <div class="avatar me-3">
+                                    <img src="../../../assets/img/marie.jpg"
+                                         alt="kal"
+                                         class="border-radius-lg shadow" />
+                                </div>
+                                <div class="d-flex align-items-start flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">Anne Marie</h6>
+                                    <p class="mb-0 text-xs">Awesome work, can you..</p>
+                                </div>
+                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
+                                   href="javascript:;">Reply</a>
+                            </li>
+                            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+                                <div class="avatar me-3">
+                                    <img src="../../../assets/img/ivana-square.jpg"
+                                         alt="kal"
+                                         class="border-radius-lg shadow" />
+                                </div>
+                                <div class="d-flex align-items-start flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">Ivanna</h6>
+                                    <p class="mb-0 text-xs">About files I can..</p>
+                                </div>
+                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
+                                   href="javascript:;">Reply</a>
+                            </li>
+                            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+                                <div class="avatar me-3">
+                                    <img src="../../../assets/img/team-4.jpg"
+                                         alt="kal"
+                                         class="border-radius-lg shadow" />
+                                </div>
+                                <div class="d-flex align-items-start flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">Peterson</h6>
+                                    <p class="mb-0 text-xs">Have a great afternoon..</p>
+                                </div>
+                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
+                                   href="javascript:;">Reply</a>
+                            </li>
+                            <li class="list-group-item border-0 d-flex align-items-center px-0">
+                                <div class="avatar me-3">
+                                    <img src="../../../assets/img/team-3.jpg"
+                                         alt="kal"
+                                         class="border-radius-lg shadow" />
+                                </div>
+                                <div class="d-flex align-items-start flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">Nick Daniel</h6>
+                                    <p class="mb-0 text-xs">Hi! I need more information..</p>
+                                </div>
+                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
+                                   href="javascript:;">Reply</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                @*Conversations*@
+            </div>
+        </div>
+
+        <div class="mt-4">
+
+
+            @*User Info Table*@
             <div class="card">
-                <div class="card-header pb-0 p-3">
-                    <h6 class="mb-0">Conversations</h6>
+                <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
+                    <h6 class="h5">Company Directory</h6>
                 </div>
-                <div class="card-body p-3">
-                    <ul class="list-group">
-                        <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                            <div class="avatar me-3">
-                                <img src="../../../assets/img/kal-visuals-square.jpg"
-                                     alt="kal"
-                                     class="border-radius-lg shadow" />
-                            </div>
-                            <div class="d-flex align-items-start flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">Sophie B.</h6>
-                                <p class="mb-0 text-xs">Hi! I need more information..</p>
-                            </div>
-                            <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
-                               href="javascript:;">Reply</a>
-                        </li>
-                        <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                            <div class="avatar me-3">
-                                <img src="../../../assets/img/marie.jpg"
-                                     alt="kal"
-                                     class="border-radius-lg shadow" />
-                            </div>
-                            <div class="d-flex align-items-start flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">Anne Marie</h6>
-                                <p class="mb-0 text-xs">Awesome work, can you..</p>
-                            </div>
-                            <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
-                               href="javascript:;">Reply</a>
-                        </li>
-                        <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                            <div class="avatar me-3">
-                                <img src="../../../assets/img/ivana-square.jpg"
-                                     alt="kal"
-                                     class="border-radius-lg shadow" />
-                            </div>
-                            <div class="d-flex align-items-start flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">Ivanna</h6>
-                                <p class="mb-0 text-xs">About files I can..</p>
-                            </div>
-                            <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
-                               href="javascript:;">Reply</a>
-                        </li>
-                        <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                            <div class="avatar me-3">
-                                <img src="../../../assets/img/team-4.jpg"
-                                     alt="kal"
-                                     class="border-radius-lg shadow" />
-                            </div>
-                            <div class="d-flex align-items-start flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">Peterson</h6>
-                                <p class="mb-0 text-xs">Have a great afternoon..</p>
-                            </div>
-                            <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
-                               href="javascript:;">Reply</a>
-                        </li>
-                        <li class="list-group-item border-0 d-flex align-items-center px-0">
-                            <div class="avatar me-3">
-                                <img src="../../../assets/img/team-3.jpg"
-                                     alt="kal"
-                                     class="border-radius-lg shadow" />
-                            </div>
-                            <div class="d-flex align-items-start flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">Nick Daniel</h6>
-                                <p class="mb-0 text-xs">Hi! I need more information..</p>
-                            </div>
-                            <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto"
-                               href="javascript:;">Reply</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            @*Conversations*@
-        </div>
-    </div>
-
-    <div class="mt-4">
-
-
-        @*User Info Table*@
-        <div class="card">
-            <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
-                <h6 class="h5">Company Directory</h6>
-            </div>
-            <div class="table-responsive">
-                <table class="table align-items-center mb-0" id="datatable">
-                    <thead>
-                        <tr>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Function</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Employed</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">PhoneNumber</th>
-
-                            <th class="text-secondary opacity-7"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var member in Model.Members)
-                        {
+                <div class="table-responsive">
+                    <table class="table align-items-center mb-0" id="datatable">
+                        <thead>
                             <tr>
-                                <td>
-                                    <div class="d-flex px-2 py-1">
-                                        <div>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Function</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Employed</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">PhoneNumber</th>
 
-                                            @if (member?.AvatarData != null)
-                                            {
-
-                                                <img alt="Image placeholder"
-                                             class="avatar avatar-sm me-3"
-                                             src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarData))" />
-                                            }
-                                            else
-                                            {
-                                                <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
-                                             alt="Image placeholder"
-                                             class="avatar avatar-sm me-3" />
-                                            }
-                                        </div>
-                                        <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="mb-0 text-xs">@member.FullName</h6>
-                                            <p class="text-xs text-secondary mb-0">@member.Email</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    @{
-                                        var memberRole = (await RoleService.GetUserRolesAsync(member));
-
-                                    }
-                                    <p class="text-xs font-weight-bold mb-0">@memberRole.First()</p>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <span class="text-secondary text-xs font-weight-bold">@member.PhoneNumber</span>
-                                </td>
-                                <td class="align-middle">
-                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                        Message
-                                    </a>
-                                </td>
+                                <th class="text-secondary opacity-7"></th>
                             </tr>
-                        }
+                        </thead>
+                        <tbody>
+                            @foreach (var member in Model.Members)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex px-2 py-1">
+                                            <div>
+
+                                                @if (member?.AvatarData != null)
+                                                {
+
+                                                    <img alt="Image placeholder"
+                                                 class="avatar avatar-sm me-3"
+                                                 src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarData))" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                                                 alt="Image placeholder"
+                                                 class="avatar avatar-sm me-3" />
+                                                }
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h6 class="mb-0 text-xs">@member.FullName</h6>
+                                                <p class="text-xs text-secondary mb-0">@member.Email</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var memberRole = (await RoleService.GetUserRolesAsync(member));
+
+                                        }
+                                        <p class="text-xs font-weight-bold mb-0">@memberRole.First()</p>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-secondary text-xs font-weight-bold">@member.PhoneNumber</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                            Message
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
 
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+            @*User Info Table*@
+
+
         </div>
-
-        @*User Info Table*@
-
-
     </div>
 </div>
+
+
 @section scripts{
 
     <script>
