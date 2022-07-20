@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using JATS.Extensions;
+using JATS.Models;
+using JATS.Models.Enums;
+using JATS.Models.ViewModel;
+using JATS.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using JATS.Data;
-using JATS.Models;
-using JATS.Extensions;
-using JATS.Models.ViewModel;
-using JATS.Services.Interfaces;
-using JATS.Models.Enums;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
 
 namespace JATS.Controllers
 {
@@ -198,6 +193,14 @@ namespace JATS.Controllers
             {
                 return NotFound();
             }
+            var PMid = (await _projectService
+                .GetProjectManagerAsync(model.Project.Id))
+                ?.Id;
+
+            if (PMid is not null)
+                model.PMid = PMid;
+
+
             model.PMList = new SelectList(await _rolesService
                 .GetUsersInRoleAsync(Roles.ProjectManager.ToString(),
                 companyId)
