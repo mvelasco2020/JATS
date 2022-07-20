@@ -47,12 +47,53 @@
                         @if (User.IsInRole(Roles.Admin.ToString())
                         || (user.Id == projectManager?.Id))
                         {
+                            @if (!@Model.Archived)
+                            {
+                                
+                            <a class="btn btn-outline-danger align-self-center btn-sm mb-0 ms-auto me-3"
+                           data-bs-toggle="modal" data-bs-target="#modal_@Model.Id">
+                                Archive
+                            </a>
+                            <div class="modal fade" id="modal_@Model.Id" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+                                        <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h6 class="modal-title" id="modal-title-default">Confirmation</h6>
+                                                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="text-center">
+                                                        Are you sure you want to archive this project:
+                                                    </div>
+                                                    <div class="text-center">
+                                                        @Model.Name
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form asp-action="Archive">
+                                                        <input type="hidden"
+                                                           asp-for="@(new Project().Id)"
+                                                           value="@Model.Id" />
+                                                        <button type="submit"
+                                                            class="btn bg-gradient-danger">
+                                                            Archive
+                                                        </button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-link ml-auto" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                             <a class="btn btn-primary align-self-center btn-sm mb-0"
                            asp-action="edit"
                            asp-controller="Projects"
                            asp-route-id="@Model.Id">
                                 Edit
                             </a>
+                            }
                         }
 
                     </div>
@@ -81,7 +122,7 @@
 
                                 @if (Model.Archived)
                                 {
-                                    <span class="badge badge-danger col-3 mr-2">Archived</span>
+                                    <span class="badge badge-danger col-3 me-2">Archived</span>
                                 }
 
 
@@ -227,7 +268,7 @@
                                         }
                                         else
                                         {
-                                            <div class="pt-2 ps-2">
+                                            <div class="pt-2 ms-2">
                                                 <p class="text-center">
                                                     No Members
                                                 </p>
@@ -507,8 +548,8 @@
         </div>
     </div>
     @*### Project Tickets End ###*@
-
 </div>
+
 
 @section Scripts {
 
