@@ -231,6 +231,7 @@ namespace JATS.Controllers
             return View(archivedTickets);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveTicket(int id)
@@ -245,7 +246,7 @@ namespace JATS.Controllers
             {
 
                 await _ticketService.ArchiveTicketAsync(ticket);
-                return RedirectToAction("Details", "Projects", new { id = ticket.ProjectId });
+                return RedirectToAction("Details", new { id = ticket.ProjectId });
             }
             else
             {
@@ -253,6 +254,7 @@ namespace JATS.Controllers
             }
         }
 
+        /*To be deleted 
         [HttpGet]
         public async Task<IActionResult> ArchiveTicket(int? id)
         {
@@ -273,6 +275,7 @@ namespace JATS.Controllers
                 return Unauthorized();
             }
         }
+         */
 
 
         [Authorize(Roles = "Admin,ProjectManager")]
@@ -363,10 +366,8 @@ namespace JATS.Controllers
             return RedirectToAction(nameof(AssignTechnician), new { id = viewModel.Ticket.Id });
         }
 
-
+        /* to be deleted
         [HttpGet]
-        [Authorize("Admin,ProjectManager")]
-
         public async Task<IActionResult> RestoreTicket(int? id)
         {
             var ticket = await _ticketService.GetTicketByIdAsync(id.Value);
@@ -374,13 +375,12 @@ namespace JATS.Controllers
                 return NotFound();
             return View(ticket);
         }
+         */
 
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize("Admin,ProjectManager")]
-
         public async Task<IActionResult> RestoreTicket(int id)
         {
             var ticket = await _ticketService.GetTicketByIdAsync(id);
@@ -388,7 +388,7 @@ namespace JATS.Controllers
                 return NotFound();
             ticket.Archived = false;
             await _ticketService.UpdateTicketAsync(ticket);
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { id = ticket.Id });
         }
 
 

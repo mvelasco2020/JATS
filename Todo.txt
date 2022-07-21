@@ -5,7 +5,6 @@ anyone should be able to create a project
 
 code user roles.
 
-
 set primordial to false when creating default projects on seeding and new company -done
 disbale archiving for primordial projects
 
@@ -13,8 +12,6 @@ disbale archiving for primordial projects
 allow upload user image during registration
 
 clean up unused scripts
-
-
 
 get current page and update side nav buttons window.location.href
 
@@ -24,3 +21,16 @@ get current page from controlelrs and pass to view to update the bread crumbs.
 Add Member function
 
 replace return unauthorized() with proper view
+
+replace server errors with proper views
+
+implement search function
+
+implement messaging function
+
+implement notification function
+
+
+improve charts
+
+improve landing pages
