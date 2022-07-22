@@ -3,7 +3,6 @@ using JATS.Models;
 using JATS.Models.Enums;
 using JATS.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace JATS.Services
 {

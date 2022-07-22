@@ -34,3 +34,27 @@ implement notification function
 improve charts
 
 improve landing pages
+
+
+
+Role Explanation
+
+Admin - can read, create, update, archive anything.
+cannot be assigned as a technician of a ticket nor PM of a project.
+Can Restore and archive any ticket or project.
+can assign PM to a project
+can assign technician to a ticket
+
+Project Manager - 
+can create update projects
+can assign pm to projects
+
+can create, update and archive own tickets or tickets in projects that the user is a pm of.
+can assign technician to tickets that the user is a pm of.
+
+
+Technician - can read tickets and projects. 
+can create, update and archive owned tickets.
+
+Submitter - can read tickets and projects. 
+can create, update and archive owned tickets.

@@ -43,9 +43,10 @@ namespace JATS.Controllers
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(User.Identity.GetCompanyId().Value);
+            List<Ticket> tickets = await _ticketService
+                .GetAllTicketsByCompanyAsync(User.Identity.GetCompanyId().Value);
 
-            return View(tickets.Where(t => t.Archived == false));
+            return View(tickets.Where(t => t.Archived != true && t.ArchivedByProject != true));
         }
 
 
@@ -282,10 +283,12 @@ namespace JATS.Controllers
         public async Task<IActionResult> UnassignedTickets()
         {
 
-            var unAssigneddTickets = await _ticketService.GetUnassignedTicketsAsync(User.Identity.GetCompanyId().Value);
+            var unAssigneddTickets = await _ticketService
+                .GetUnassignedTicketsAsync(User.Identity.GetCompanyId().Value);
+
             if (User.IsInRole(nameof(Roles.Admin)))
             {
-                return View(unAssigneddTickets.Where(t => t.Archived == false));
+                return View(unAssigneddTickets.Where(t => t.Archived != true && t.ArchivedByProject != true));
             }
             else
             {
@@ -295,7 +298,7 @@ namespace JATS.Controllers
                     if (await _projectService.IsAssignedProjectManager(_userManager.GetUserId(User), item.ProjectId))
                         pmTickets.Add(item);
                 }
-                return View(pmTickets.Where(t => t.Archived == false));
+                return View(pmTickets.Where(t => t.Archived != true && t.ArchivedByProject != true));
             }
 
         }

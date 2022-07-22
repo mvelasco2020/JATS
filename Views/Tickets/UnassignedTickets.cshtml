@@ -1,85 +1,240 @@
 ﻿@using JATS.Models.Enums
-@using Microsoft.AspNetCore.Identity
+@using JATS.Extensions
 @using JATS.Services.Interfaces
-@inject IProjectService ProjectService
+@using Microsoft.AspNetCore.Identity
 @inject UserManager<JTUser> UserManager
-@model IEnumerable<Ticket>
-
-
+@inject ITicketService TicketService
+@model IEnumerable<JATS.Models.Ticket>
 @{
+    ViewData["Title"] = "All Tickets";
     JTUser user = await UserManager.GetUserAsync(User);
 }
-<div class="col-md-12 col">
-    <div class="mt-5 bg-secondary">
-        <div class="card m-1 p-2">
-            <div class="header">
-                <h2>Tickets</h2>
-            </div>
-            <div class="body">
-                <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                    <table class="table table-hover">
-                        <thead class="">
-                            <tr>
-                                @* Table header *@
-                                <th>Title</th>
-                                <th>Technician</th>
-                                <th>Status</th>
-                                <th>Priority</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @* Table body *@
-                            @foreach (var ticket in Model.OrderByDescending(d => d.Created))
-                            {
-                                <tr>
-                                    <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black"><strong>@ticket.Title</strong></a> </td>
-                                    <td>
-                                        @if (ticket.TechnicianUserId != null)
-                                        {
-                                            @ticket.TechnicianUser?.FullName
-                                        }
-                                        else
-                                        {
-                                            if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
-                                            {
-                                                <a class="btn btn-xs btn-info" asp-action="AssignTechnician" asp-controller="Tickets" asp-route-ticketId="@ticket.Id">Assign Technician</a>
-                                            }
 
-                                        }
-                                    </td>
 
-                                    <td><span class="">@ticket.TicketStatus.Name </span></td>
 
-                                    <td><span class="">@ticket.TicketPriority.Name </span></td>
-                                    <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
-                                    <td>
-                                        <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
-                                        @if (ticket.TechnicianUserId == user.Id || ticket.OwnerUserId == user.Id || User.IsInRole(nameof(Roles.Admin)))
-                                        {
-                                            <a class="btn btn-sm btn-outline-secondary"
-                                       asp-action="Edit"
-                                       asp-controller="Tickets"
-                                       asp-route-id="@ticket.Id">
-                                                <i class="fs-5 bi-pencil">
-                                                </i>
-                                            </a>
-                                        }
+<div class="container">
 
-                                        @if (User.IsInRole("Admin"))
-                                        {
-                                            <a class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
+    <div class="card">
+        <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
+            <h6 class="h5">Unassigned Tickets</h6>
         </div>
+        <div class="table-responsive">
+            <table class="table align-items-center mb-0" id="datatable">
+                <thead>
+                    <tr>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ticket</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Technician</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Priority</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Type</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Created</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Project</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex">
+                                    <button class="btn btn-link text-secondary mb-0"
+                                        data-bs-toggle="dropdown">
+                                        <i class="fa fa-ellipsis-v text-xs" aria-hidden="true"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-lg-start px-2 py-3" aria-labelledby="navbarDropdownMenuLink2" data-popper-placement="left-start">
+                                        <li>
+                                            <a class="dropdown-item border-radius-md"
+                                           asp-controller="Tickets"
+                                           asp-action="Details"
+                                           asp-route-id="@ticket.Id">
+                                                Details
+                                            </a>
+                                        </li>
 
+                                        @if (User.IsInRole(Roles.Admin.ToString()) || 
+                                        ticket.OwnerUserId == user.Id || 
+                                        ticket.TechnicianUserId == user.Id)
+                                        {   
+                                        <li>
+                                            <a class="dropdown-item border-radius-md"
+                                           asp-controller="Tickets"
+                                           asp-action="Edit"
+                                           asp-route-id="@ticket.Id">
+                                                Edit
+                                            </a>
+                                        </li>
+                                        }
+
+
+                                    </ul>
+                                    <div class="my-auto">
+                                        <a asp-action="Details"
+                                       asp-route-id="@ticket.Id">
+                                            <h6 class="mb-0 text-xs">
+                                                @if (@ticket.Archived)
+                                                {
+                                                    <span class="text-danger">Archived - </span>
+                                                }
+                                                else if (@ticket.ArchivedByProject)
+                                                {
+                                                    <span class="text-danger">Archived By Proj - </span>
+
+                                                }
+                                                @ticket.Title
+                                            </h6>
+                                        </a>
+                                    </div>
+                                    @* Archive and Restore Ticket modals start*@
+                                    <div class="modal fade" id="modalrestore_@ticket.Id" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+                                        <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h6 class="modal-title" id="modal-title-default">Confirmation</h6>
+                                                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="text-center">
+                                                        Are you sure you want to restore this project:
+                                                    </div>
+                                                    <div class="text-center">
+                                                        @ticket.Title
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form asp-action="RestoreTicket">
+                                                        <input type="hidden"
+                                                           asp-for="@(new Ticket().Id)"
+                                                           value="@ticket.Id" />
+                                                        <button type="submit"
+                                                            class="btn bg-gradient-info">
+                                                            Restore
+                                                        </button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-link ml-auto" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="modal_@ticket.Id" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+                                        <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h6 class="modal-title" id="modal-title-default">Confirmation</h6>
+                                                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="text-center">
+                                                        Are you sure you want to archive this ticket:
+                                                    </div>
+                                                    <div class="text-center">
+                                                        @ticket.Title
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form asp-action="ArchiveTicket">
+                                                        <input type="hidden"
+                                                           asp-for="@(new Ticket().Id)"
+                                                           value="@ticket.Id" />
+                                                        <button type="submit"
+                                                            class="btn bg-gradient-danger">
+                                                            Archive
+                                                        </button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-link ml-auto" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @* Archive and Restore Ticket modals start*@
+
+                                </div>
+                            </td>
+
+                            <td>
+                                <div>
+
+                                    @{
+                                        var technician = await TicketService.GetTicketTechnicianAsync(ticket.Id, User.Identity.GetCompanyId().Value);
+                                    }
+                                    @if (technician is null)
+                                    {
+                                        <a asp-controller="Tickets"
+                                   asp-action="Details"
+                                   asp-route-id="@ticket.Id">
+                                            <h6 class="mb-0 text-xs">Unassigned</h6>
+                                        </a>
+
+                                    }
+                                    else
+                                    {
+                                        <a>
+                                            <h6 class="mb-0 text-xs">@technician.FullName</h6>
+                                        </a>
+
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge badge-dot">
+                                    @switch (ticket.TicketPriority?.Name)
+                                    {
+                                        case ("High"):
+                                            <i class="bg-warning"></i>
+                                            break;
+                                        case ("Urgent"):
+                                            <i class="bg-danger"></i>
+                                            break;
+                                        case ("Medium"):
+                                            <i class="bg-success"></i>
+                                            break;
+
+                                        default:
+                                            <i class="bg-info"></i>
+                                            break;
+                                    }
+                                    <span class="text-dark text-xs">@ticket.TicketPriority?.Name</span>
+                                </span>
+                            </td>
+
+                            <td class="align-middle">
+                                <p class="mb-0 text-xs">@ticket.TicketType?.Name</p>
+
+                            </td>
+
+                            <td class="align-middle">
+                                <h6 class="mb-0 text-xs">@ticket.Created.ToString("MM/dd/yyyy hh:mm")</h6>
+
+                            </td>
+
+                            <td class="align-middle">
+                                <a asp-controller="Projects"
+                               asp-action="Details"
+                               asp-route-id="@ticket.ProjectId">
+                                    <h6 class="mb-0 text-xs">@ticket.Project?.Name</h6>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+                
+
+@section scripts{
+    <script>
+        const dataTableBasic = new simpleDatatables.DataTable("#datatable", {
+            searchable: true,
+            columns: [
+                // Sort the second column in ascending order
+                { select: 4, sort: "desc" },],
+            perPage: 25
+        });
+    </script>
+    }

@@ -131,11 +131,14 @@
 
         <div class="d-sm-flex justify-content-start mt-4">
             <div>
+                @if (User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
+                {
                 <a asp-controller="Projects"
                asp-action="Create"
                class="btn btn-icon bg-gradient-primary">
                     New Project
                 </a>
+                }
             </div>
         </div>
     }
