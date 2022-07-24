@@ -72,6 +72,14 @@ namespace JATS.Controllers
                 return NotFound();
             }
 
+
+            ViewData["TicketTechnician"] = new SelectList(await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, nameof(Roles.Technician)), "Id", "FullName");
+            ViewData["TicketPriorityId"] = new SelectList((await _lookupService.GetTicketPrioritiesAsync()), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList((await _lookupService.GetTicketStatusesAsync()), "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList((await _lookupService.GetTicketTypesAsync()), "Id", "Name", ticket.TicketTypeId);
+
+            ticket.Comments = ticket.Comments?.OrderByDescending(c => c.Created).ToList();
+            ticket.History = ticket.History?.OrderByDescending(h => h.Created).ToList();
             return View(ticket);
         }
 
@@ -207,7 +215,7 @@ namespace JATS.Controllers
                             throw;
                         }
                     }
-                    //Todo add history
+
                     Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
 
@@ -218,6 +226,7 @@ namespace JATS.Controllers
                     return Unauthorized();
                 }
             }
+            ViewData["TicketTechnician"] = new SelectList(await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, nameof(Roles.Technician)), "Id", "FullName");
             ViewData["TicketPriorityId"] = new SelectList((await _lookupService.GetTicketPrioritiesAsync()), "Id", "Name", ticket.TicketPriorityId);
             ViewData["TicketStatusId"] = new SelectList((await _lookupService.GetTicketStatusesAsync()), "Id", "Name", ticket.TicketStatusId);
             ViewData["TicketTypeId"] = new SelectList((await _lookupService.GetTicketTypesAsync()), "Id", "Name", ticket.TicketTypeId);
@@ -436,7 +445,8 @@ namespace JATS.Controllers
         public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
         {
             JTUser user = await _userManager.GetUserAsync(User);
-            if (!await IsUserAuthorizedToMakeChanges(user, ticketAttachment.Ticket))
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(ticketAttachment.TicketId);
+            if (!await IsUserAuthorizedToMakeChanges(user, ticket))
             {
                 return Unauthorized();
             }

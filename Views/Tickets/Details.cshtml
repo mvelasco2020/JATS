@@ -9,12 +9,200 @@
 @model JATS.Models.Ticket
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Ticket Details";
 
     JTUser currentUser = await UserManager.GetUserAsync(User);
     JTUser projectManager = await ProjectService.GetProjectManagerAsync(Model.ProjectId);
 }
 
+
+<div class="container">
+    <div class="row">
+        <div class="card">
+            <div class="card-body p-3">
+                <h4>Ticket Details</h4>
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ProjectId" />
+                    <input type="hidden" asp-for="Created" />
+                    <input type="hidden" asp-for="OwnerUserId" />
+                    <input type="hidden" asp-for="TechnicianUserId" />
+                    <input type="hidden" asp-for="Archived" />
+
+
+                    <div class="form-group mt-3">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" rows="3" class="form-control"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-12 col-md-6">
+                            <label class="control-label">Ticket Status</label>
+                            <select asp-for="TicketStatusId" class="form-control" asp-items="ViewBag.TicketStatusId"></select>
+                        </div>
+                        <div class="form-group col-12 col-md-6">
+                            <label asp-for="TechnicianUserId" class="control-label"></label>
+                            <select asp-for="TechnicianUserId" class="form-control" asp-items="ViewBag.TechnicianUserId"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12 col-md-6">
+                            <label asp-for="TicketTypeId" class="control-label"></label>
+                            <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                        </div>
+                        <div class="form-group col-12 col-md-6">
+                            <label asp-for="TicketPriorityId" class="control-label"></label>
+                            <select asp-for="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ProjectId" class="control-label"></label>
+                        <input class="form-control" disabled value="@Model.Project.Name">
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12 col-md-6">
+                            <label class="control-label">Project End Date</label>
+                            <input class="form-control" disabled value="@Model.Project.EndDate.ToString("MMMM dd, yyyy")" />
+                        </div>
+                        <div class="form-group col-12 col-md-6">
+                            <label class="control-label">Ticket Creation</label>
+                            <input class="form-control" disabled value="@Model.Created.ToString("MMMM dd, yyyy HH:MM")" />
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <input type="submit" value="Save" class="btn btn-primary col-3 col-lg-2 mt-3" />
+                    </div>
+                </form>
+                <div>
+                    <hr class="horizontal dark mt-5" />
+                    @* Attachments Area start*@
+                    <div class="row">
+                        <h5>Attachments</h5>
+                        @foreach (TicketAttachment item in Model.Attachments)
+                        {
+                            <div class="col col-sm-2">
+                                <a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
+                                    <div class="icon">
+                                        <img src="@FileService.GetGileIcon(item.FileName)"
+                                         style="height:40px;width:40px"
+                                         data-bs-toggle="tooltip"
+                                         data-bs-placement="top" />
+                                    </div>
+                                </a>
+                                <div class="mt-2" style="font-size:x-small">
+                                    <div class="file-name">
+                                    </div>
+                                    <small><strong>@item.Description</strong> @FileService.FormatFileSize(item.Data.Length) </small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    @* Attachments Area End*@
+
+                    @* New Comments Start*@
+                    <div class="row mt-5">
+                        <div>
+                            <h5>Add A Comment</h5>
+                            @*Form and Logic for authorized users to add comments*@
+                            <form asp-action="AddTicketComment"
+                                  asp-controller="Tickets"
+                                  method="post"
+                                  class="form-horizontal form bordered">
+                                <input type="hidden" asp-for="Id" name="TicketId" />
+                                <input type="hidden" asp-for="@(new TicketComment().Created)" value="@DateTimeOffset.Now" />
+                                <input type="hidden" asp-for="@(new TicketComment().UserId)" value="@currentUser.Id" />
+
+
+                                @if (Model.TechnicianUserId == currentUser.Id ||
+                                Model.OwnerUserId == currentUser.Id ||
+                                projectManager?.Id == currentUser.Id ||
+                                User.IsInRole(Roles.Admin.ToString()))
+                                {
+                                    <div class="form-group">
+                                        <textarea asp-for="@(new TicketComment().Comment)"
+                                              rows="4"
+                                              class="form-control"
+                                              required
+                                              placeholder="Add Comment.."></textarea>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary">Submit</button>
+                                }
+                                else
+                                {
+                                    <div class="form-group">
+                                        <textarea disabled asp-for="@(new TicketComment().Comment)"
+                                              rows="8"
+                                              class="form-control"
+                                              required
+                                              placeholder="Add Comment.."></textarea>
+                                    </div>
+                                }
+                            </form>
+
+                            <h6 class="mt-2">Previous Comments</h6>
+                            <ul class="right_chat list-unstyled mt-2">
+                                @*Loop to show comments made for the Ticket*@
+                                @{
+                                    int ctr = 0;
+                                }
+                                @foreach (var comment in Model.Comments)
+                                {
+                                    <li>
+
+                                        <div class="d-flex">
+                                            <div class="flex-shrink-0">
+                                                @if (comment.User?.AvatarData != null)
+                                                {
+                                                    <img class="avatar rounded-circle"
+                                                 src="data:image/*;base64,@(Convert.ToBase64String(comment.User.AvatarData))" />
+                                                }
+                                                else
+                                                {
+                                                    <img class="avatar rounded-circle"
+                                                 src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" />
+                                                }
+                                                @*
+
+                                            <img alt="Image placeholder" class="avatar rounded-circle" src="/img/bruce-mars.jpg">
+                                            *@
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="mt-0 mb-0">@@ @comment.User.FullName</h6>
+                                                <small style="font-size:x-small;">@comment.Created.ToString("MM dd yyyy h:ss tt")</small>
+                                                <p class="text-sm">
+                                                    @Html.Raw(comment.Comment)
+                                                </p>
+                                            </div>
+                                        </div>
+                                        @{
+                                            ctr++;
+                                        }
+                                        @if (ctr < Model.Comments.Count())
+                                        {
+                                            <hr class="horizontal dark" />
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    @*Now Comments end*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <h1>Detaiqlas</h1>
 
 <h1>Ticket Details</h1>
