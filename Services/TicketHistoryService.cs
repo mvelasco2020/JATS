@@ -62,7 +62,7 @@ namespace JATS.Services
                     history.UserId = userId;
                     history.Created = DateTimeOffset.Now;
                     history.Property = "Description";
-                    history.Description = $"New ticket title: {newTicket.Title}.";
+                    history.Description = $"New ticket title: {newTicket.Description}.";
                     history.OldValue = oldTicket.Title;
                     history.NewValue = newTicket.Title;
                     await _context.TicketHistories.AddAsync(history);
@@ -144,7 +144,7 @@ namespace JATS.Services
             {
                 Ticket ticket = await _context.Tickets.FindAsync(ticketId);
                 string description = model.ToLower().Replace("Ticket", "");
-                description = $"New {description} has been added to ticket: {ticket.Title}";
+                description = $"New {description} has been added to {ticket.Title}";
 
                 TicketHistory history = new()
                 {
