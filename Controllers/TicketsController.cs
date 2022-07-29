@@ -84,7 +84,7 @@ namespace JATS.Controllers
         }
 
         // GET: Tickets/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? projId)
         {
             int companyId = User.Identity.GetCompanyId().Value;
             JTUser user = await _userManager.GetUserAsync(User);
@@ -95,12 +95,25 @@ namespace JATS.Controllers
             }
             else
             {
-                ViewData["ProjectId"] = new SelectList((await _projectService.GetUserProjectsAsync(user.Id)), "Id", "Name");
+                if (projId is not null)
+                {
+                    Project project = await _projectService.GetProjectByIdAsync(projId.Value, companyId);
+
+                    ViewData["ProjectId"] = new SelectList((await _projectService.GetUserProjectsAsync(user.Id)), "Id", "Name", new { Id = project.Id, Name = project.Name });
+                }
+                else
+                    ViewData["ProjectId"] = new SelectList((await _projectService.GetUserProjectsAsync(user.Id)), "Id", "Name");
+
+
+
             }
+
             ViewData["TicketPriorityId"] = new SelectList((await _lookupService.GetTicketPrioritiesAsync()), "Id", "Name");
             ViewData["TicketTypeId"] = new SelectList((await _lookupService.GetTicketTypesAsync()), "Id", "Name");
             return View();
         }
+
+
 
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

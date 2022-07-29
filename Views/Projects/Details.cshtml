@@ -348,7 +348,8 @@
                         <h5 class="ms-3">Project Tickets</h5>
                         <a class="btn btn-primary btn-sm"
                            asp-controller="Tickets"
-                           asp-action="Create">
+                           asp-action="Create"
+                           asp-route-projId="@Model.Id">
                             New Ticket
                         </a>
                     </div>
