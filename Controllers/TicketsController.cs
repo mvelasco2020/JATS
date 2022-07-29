@@ -98,14 +98,10 @@ namespace JATS.Controllers
                 if (projId is not null)
                 {
                     Project project = await _projectService.GetProjectByIdAsync(projId.Value, companyId);
-
                     ViewData["ProjectId"] = new SelectList((await _projectService.GetUserProjectsAsync(user.Id)), "Id", "Name", new { Id = project.Id, Name = project.Name });
                 }
                 else
                     ViewData["ProjectId"] = new SelectList((await _projectService.GetUserProjectsAsync(user.Id)), "Id", "Name");
-
-
-
             }
 
             ViewData["TicketPriorityId"] = new SelectList((await _lookupService.GetTicketPrioritiesAsync()), "Id", "Name");
