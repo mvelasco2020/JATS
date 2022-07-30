@@ -37,7 +37,10 @@ improve landing pages
 
 
 
-Role Explanation
+change UpdateAvatar parameter to viewmodel
+
+
+Role Explanation:
 
 Admin - can read, create, update, archive anything.
 cannot be assigned as a technician of a ticket nor PM of a project.

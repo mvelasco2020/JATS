@@ -1,29 +1,161 @@
 ﻿@page
 @model IndexModel
+@inject UserManager<JTUser> UserManager;
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h3>@ViewData["Title"]</h3>
-<partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
+@{
+    JTUser currentUser = await UserManager.GetUserAsync(User);
+    var allRoles = UserManager.GetRolesAsync(currentUser).Result;
+    var roles = "";
+    foreach (var role in allRoles)
+    {
+        roles += role;
+
+    }
+
+}
+<div class="card mt-3 mt-md-0">
+    <div class="card-header">
+        <h5>@currentUser.FullName</h5>
+        <partial name="_StatusMessage" for="StatusMessage" />
+        <div class="avatar avatar-xl position-relative cursor-pointer">
+            @if (currentUser.AvatarData is null)
+            {
+                <a data-bs-toggle="dropdown"
+               id="avatardropdown">
+                    <img src="~/img/bruce-mars.jpg"
+                     alt="@currentUser.FullName avatar"
+                     class="w-100 border-radius-lg shadow-sm ">
+                </a>
+            }
+            else
+            {
+                <a data-bs-toggle="dropdown"
+               id="avatardropdown">
+                    <img src="data:image/*;base64,@(Convert.ToBase64String(currentUser.AvatarData))"
+                     alt="@currentUser.FullName avatar"
+                     class="w-100 border-radius-lg shadow-sm">
+                </a>
+            }
+            <div class="dropdown-menu shadow"
+                 aria-labelledby="avatardropdown">
+                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal-form">
+                    Update Avatar
+                </a>
+            </div>
+        </div>
+        <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-body p-0">
+                        <div class="card card-plain">
+                            <div class="card-header pb-0 text-left">
+                                <h6 class="font-weight-bolder">Replace Avatar</h6>
+                            </div>
+                            <div class="card-body">
+                                <form asp-action="UpdateAvatar"
+                                      asp-controller="UserInfoUpdates"
+                                      role="form text-left"
+                                      method="post"
+                                      enctype="multipart/form-data">
+                                    @if (currentUser.AvatarData is null)
+                                    {
+
+                                        <img src="~/img/bruce-mars.jpg"
+                                         id="imageFileData"
+                                         alt="@currentUser.FullName avatar"
+                                         class="w-100 border-radius-lg shadow-sm ">
+                                    }
+                                    else
+                                    {
+                                        <img src="data:image/*;base64,@(Convert.ToBase64String(currentUser.AvatarData))"
+                                         id="imageFileData"
+                                         alt="@currentUser.FullName avatar"
+                                         class="w-100 border-radius-lg shadow-sm">
+                                    }
+
+                                    <div class="mt-4">
+                                        <input type="hidden" asp-for="@(new JTUser().Id)" value="@currentUser.Id" />
+                                        <input class="form-control form-control-sm"
+                                               asp-for="@(new JTUser().AvatarFormFile)"
+                                               id="formFileSm"
+                                               type="file"
+                                               accept=".png, .jpg, .jpeg, .gif"
+                                               onchange="document.getElementById('imageFileData').src = window.URL.createObjectURL(this.files[0])">
+                                        <div class="text-center">
+                                            <button type="submit"
+                                                    class="btn btn-round bg-gradient-primary btn-lg w-100 mt-4 mb-0">
+                                                Save
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body pt-0">
         <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Username" class="form-control" disabled />
-                <label asp-for="Username" class="form-label"></label>
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger">
             </div>
-            <div class="form-floating">
-                <input asp-for="Input.PhoneNumber" class="form-control" />
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            <div class="row">
+                <div class="col-6">
+                    <label class="form-label">First Name</label>
+                    <div class="input-group">
+                        <input id="firstName"
+                               name="firstName"
+                               class="form-control"
+                               type="text" placeholder="John"
+                               required="required">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Last Name</label>
+                    <div class="input-group">
+                        <input id="lastName"
+                               name="lastName"
+                               class="form-control"
+                               type="text"
+                               placeholder="Doe"
+                               required="required">
+                    </div>
+                </div>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+
+            <div class="row">
+                <div class="col-6">
+                    <label class="form-label mt-4">Your Role</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" disabled placeholder="@roles">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <label class="form-label mt-4">Phone Number</label>
+                    <div class="input-group">
+                        <input asp-for="Input.PhoneNumber"
+                               class="form-control"
+                               type="text"
+                               placeholder="+1 214 577 8896">
+                        <span asp-validation-for="Input.PhoneNumber"
+                              class="text-danger">
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="update-profile-button" type="submit" class="btn btn-primary btn-round col-3 mt-4">Save</button>
+
         </form>
     </div>
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
