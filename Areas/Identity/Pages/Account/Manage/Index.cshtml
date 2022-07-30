@@ -1,21 +1,21 @@
 ﻿@page
+@using JATS.Services.Interfaces
 @model IndexModel
 @inject UserManager<JTUser> UserManager;
+@inject ICompanyInfoService CompanyInfoService
+
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
-}
 
-@{
     JTUser currentUser = await UserManager.GetUserAsync(User);
+    Company company = await CompanyInfoService.GetCompanyByIdAsync(currentUser.CompanyId);
     var allRoles = UserManager.GetRolesAsync(currentUser).Result;
     var roles = "";
     foreach (var role in allRoles)
     {
-        roles += role;
-
+        roles += $"{role} ";
     }
-
 }
 <div class="card mt-3 mt-md-0">
     <div class="card-header">
@@ -42,13 +42,19 @@
             }
             <div class="dropdown-menu shadow"
                  aria-labelledby="avatardropdown">
-                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal-form">
+                <a class="dropdown-item"
+                   data-bs-toggle="modal"
+                   data-bs-target="#modal-form">
                     Update Avatar
                 </a>
             </div>
         </div>
-        <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal fade" id="modal-form"
+             tabindex="-1" role="dialog"
+             aria-labelledby="modal-form"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm"
+                 role="document">
                 <div class="modal-content">
                     <div class="modal-body p-0">
                         <div class="card card-plain">
@@ -101,6 +107,10 @@
         </div>
     </div>
     <div class="card-body pt-0">
+        @if (company.Name == "Company1")
+        {
+            <p class="text-danger">Some info for the demo accounts cannot be modified</p>
+        }
         <form id="profile-form" method="post">
             <div asp-validation-summary="ModelOnly"
                  class="text-danger">
@@ -113,7 +123,9 @@
                                name="firstName"
                                class="form-control"
                                type="text" placeholder="John"
-                               required="required">
+                               required="required"
+                               @company.Name= ="Company1" ? disabled
+                               value="@currentUser.FirstName">
                     </div>
                 </div>
                 <div class="col-6">
@@ -124,7 +136,9 @@
                                class="form-control"
                                type="text"
                                placeholder="Doe"
-                               required="required">
+                               @company.Name= ="Company1" ? disabled
+                               required="required"
+                               value="@currentUser.LastName">
                     </div>
                 </div>
             </div>
@@ -133,7 +147,9 @@
                 <div class="col-6">
                     <label class="form-label mt-4">Your Role</label>
                     <div class="input-group">
-                        <input class="form-control" type="text" disabled placeholder="@roles">
+                        <input class="form-control" type="text"
+                               disabled
+                               placeholder="@roles">
                     </div>
                 </div>
                 <div class="col-6">
@@ -142,16 +158,19 @@
                         <input asp-for="Input.PhoneNumber"
                                class="form-control"
                                type="text"
-                               placeholder="+1 214 577 8896">
+                               placeholder="+1 214 577 8896"
+                               value="@currentUser.PhoneNumber">
                         <span asp-validation-for="Input.PhoneNumber"
                               class="text-danger">
                         </span>
                     </div>
                 </div>
             </div>
-
-            <button id="update-profile-button" type="submit" class="btn btn-primary btn-round col-3 mt-4">Save</button>
-
+            <button id="update-profile-button"
+                    type="submit"
+                    class="btn btn-primary btn-round col-3 mt-4">
+                Save
+            </button>
         </form>
     </div>
 </div>
