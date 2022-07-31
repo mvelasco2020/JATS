@@ -17,11 +17,29 @@
         roles += $"{role} ";
     }
 }
+
+@if (TempData["SuccessMessage"]?.ToString().Length > 2)
+{
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        <span class="alert-text text-light"><strong>Success!</strong> @TempData["SuccessMessage"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+@if (TempData["ErrorMessage"]?.ToString().Length > 2)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span class="alert-text"><strong>Danger!</strong> This is a danger alert—check it out!</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
 <div class="card mt-3 mt-md-0">
     <div class="card-header">
         <h5>@currentUser.FullName</h5>
-        <partial name="_StatusMessage" for="StatusMessage" />
-        <div class="avatar avatar-xl position-relative cursor-pointer">
+        <div class="avatar avatar-xl position-relative cursor-pointer mt-2">
             @if (currentUser.AvatarData is null)
             {
                 <a data-bs-toggle="dropdown"
@@ -107,11 +125,13 @@
         </div>
     </div>
     <div class="card-body pt-0">
-        @if (company.Name == "Company1")
+        @if (company.Name == "SpaceX1")
         {
             <p class="text-danger">Some info for the demo accounts cannot be modified</p>
         }
-        <form id="profile-form" method="post">
+        <form id="profile-form" method="post"
+              asp-controller="UserInfoUpdates"
+              asp-action="UpdateProfileInfo">
             <div asp-validation-summary="ModelOnly"
                  class="text-danger">
             </div>
@@ -120,11 +140,10 @@
                     <label class="form-label">First Name</label>
                     <div class="input-group">
                         <input id="firstName"
-                               name="firstName"
+                               name="FirstName"
                                class="form-control"
                                type="text" placeholder="John"
                                required="required"
-                               @company.Name= ="Company1" ? disabled
                                value="@currentUser.FirstName">
                     </div>
                 </div>
@@ -132,11 +151,10 @@
                     <label class="form-label">Last Name</label>
                     <div class="input-group">
                         <input id="lastName"
-                               name="lastName"
+                               name="LastName"
                                class="form-control"
                                type="text"
                                placeholder="Doe"
-                               @company.Name= ="Company1" ? disabled
                                required="required"
                                value="@currentUser.LastName">
                     </div>
@@ -157,9 +175,11 @@
                     <div class="input-group">
                         <input asp-for="Input.PhoneNumber"
                                class="form-control"
-                               type="text"
-                               placeholder="+1 214 577 8896"
-                               value="@currentUser.PhoneNumber">
+                               name="PhoneNumber"
+                               type='tel'
+                               placeholder="214-577-8896"
+                               value="@currentUser.PhoneNumber"
+                               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
                         <span asp-validation-for="Input.PhoneNumber"
                               class="text-danger">
                         </span>
