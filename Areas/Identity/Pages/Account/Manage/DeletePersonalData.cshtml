@@ -1,32 +1,58 @@
 ﻿@page
 @model DeletePersonalDataModel
+@using JATS.Services.Interfaces
+@inject UserManager<JTUser> UserManager;
+@inject ICompanyInfoService CompanyInfoService
 @{
     ViewData["Title"] = "Delete Personal Data";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
+    JTUser currentUser = await UserManager.GetUserAsync(User);
+    Company company = await CompanyInfoService.GetCompanyByIdAsync(currentUser.CompanyId);
 }
 
-<h3>@ViewData["Title"]</h3>
+<div class="card mt-3 mt-md-0">
+    <div class="card-header text-center pb-0">
+        <h5>@ViewData["Title"]</h5>
 
-<div class="alert alert-warning" role="alert">
-    <p>
-        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-    </p>
+        <div class="alert alert-warning text-light" role="alert">
+            <p>
+                <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+            </p>
+        </div>
+    </div>
+    <div class="card-body pt-0">
+
+        <div>
+            <form id="delete-user" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                @if (Model.RequirePassword)
+                {
+
+                    <label asp-for="Input.Password" class="form-label"></label>
+                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+                }
+                @if (company.Name == "SpaceX")
+                {
+                    <button class="w-100 btn btn-round btn-danger mt-3"
+                        type="submit" disabled>
+                        Delete data and close my account
+                    </button>
+                }
+                else
+                {
+                    <button class="w-100 btn btn-round btn-danger mt-3"
+                        type="submit">
+                        Delete data and close my account
+                    </button>
+                }
+            </form>
+        </div>
+    </div>
 </div>
 
-<div>
-    <form id="delete-user" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @if (Model.RequirePassword)
-        {
-            <div class="form-floating">
-                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
-                <label asp-for="Input.Password" class="form-label"></label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-        }
-        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete data and close my account</button>
-    </form>
-</div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

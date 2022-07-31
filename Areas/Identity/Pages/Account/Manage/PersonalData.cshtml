@@ -1,27 +1,54 @@
 ﻿@page
 @model PersonalDataModel
+@using JATS.Services.Interfaces
+@inject UserManager<JTUser> UserManager;
+@inject ICompanyInfoService CompanyInfoService
 @{
     ViewData["Title"] = "Personal Data";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
+    JTUser currentUser = await UserManager.GetUserAsync(User);
+    Company company = await CompanyInfoService.GetCompanyByIdAsync(currentUser.CompanyId);
 }
 
-<h3>@ViewData["Title"]</h3>
+<div class="card mt-3 mt-md-0">
+    <div class="card-header text-center pb-0">
+        <h5>@ViewData["Title"]</h5>
+        @if (company.Name == "SpaceX")
+        {
+            <p class="text-danger">Some info for the demo accounts cannot be modified</p>
+        }
+    </div>
+    <div class="card-body pt-0">
+        <div class="col-12">
+            <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
+            <p>
+                <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+            </p>
+            <form id="download-data" asp-page="DownloadPersonalData" method="post">
+                <button class="btn btn-primary btn-round" type="submit">Download</button>
+            </form>
 
-<div class="row">
-    <div class="col-md-6">
-        <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
-        <p>
-            <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-        </p>
-        <form id="download-data" asp-page="DownloadPersonalData" method="post">
-            <button class="btn btn-primary" type="submit">Download</button>
-        </form>
-        <p>
-            <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger">Delete</a>
-        </p>
+            @if (company.Name == "SpaceX")
+            {
+                <p>
+                    <a id="delete"
+                   asp-page="DeletePersonalData"
+                   class="btn btn-danger btn-round disabled">Delete</a>
+                </p>
+            }
+            else
+            {
+                <p>
+                    <a id="delete"
+                   asp-page="DeletePersonalData"
+                   class="btn btn-danger btn-round">Delete</a>
+                </p>
+            }
+        </div>
     </div>
 </div>
 
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+    }

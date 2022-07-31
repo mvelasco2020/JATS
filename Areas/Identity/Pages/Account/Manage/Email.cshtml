@@ -1,43 +1,87 @@
 ﻿@page
 @model EmailModel
+@using JATS.Services.Interfaces
+@inject UserManager<JTUser> UserManager;
+@inject ICompanyInfoService CompanyInfoService
 @{
     ViewData["Title"] = "Manage Email";
     ViewData["ActivePage"] = ManageNavPages.Email;
+    JTUser currentUser = await UserManager.GetUserAsync(User);
+    Company company = await CompanyInfoService.GetCompanyByIdAsync(currentUser.CompanyId);
 }
 
-<h3>@ViewData["Title"]</h3>
+
+
 <partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="email-form" method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            @if (Model.IsEmailConfirmed)
-            {
-                <div class="form-floating input-group">
-                    <input asp-for="Email" class="form-control" disabled />
-                        <div class="input-group-append">
-                            <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
-                        </div>
+<div class="card mt-3 mt-md-0">
+    <div class="card-header text-center pb-0">
+        <h6>Change Emil</h6>
+        @if (company.Name == "SpaceX")
+        {
+            <p class="text-danger">Some info for the demo accounts cannot be modified</p>
+        }
+    </div>
+    <div class="card-body pt-0">
+        <div class="mx-auto col-12 col-md-10">
+            <form id="email-form" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                @if (Model.IsEmailConfirmed)
+                {
                     <label asp-for="Email" class="form-label"></label>
-                </div>
-            }
-            else
-            {
-                <div class="form-floating">
                     <input asp-for="Email" class="form-control" disabled />
+                }
+                else
+                {
+
                     <label asp-for="Email" class="form-label"></label>
-                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">Send verification email</button>
-                </div>
-            }
-            <div class="form-floating">
-                <input asp-for="Input.NewEmail" class="form-control" autocomplete="email" aria-required="true" />
-                <label asp-for="Input.NewEmail" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" disabled />
+                    <div>
+
+                        <button id="email-verification"
+                            type="submit"
+                            asp-page-handler="SendVerificationEmail"
+                            class="btn btn-link">
+                            Send verification email
+                        </button>
+                    </div>
+
+                }
+                <label asp-for="Input.NewEmail" class="form-label mt-3"></label>
+                @if (company.Name == "SpaceX")
+                {
+                    <input asp-for="Input.NewEmail"
+                       class="form-control"
+                       autocomplete="email"
+                       aria-required="true"
+                       disabled />
+                    <button id="change-email-button" type="submit"
+                        asp-page-handler="ChangeEmail"
+                        class="w-100 btn btn-round btn-primary mt-3"
+                        disabled>
+                        Change Email
+                    </button>
+                }
+                else
+                {
+                    <input asp-for="Input.NewEmail"
+                       class="form-control"
+                       autocomplete="email"
+                       aria-required="true" />
+                    <button id="change-email-button" type="submit"
+                        asp-page-handler="ChangeEmail"
+                        class="w-100 btn btn-round btn-primary mt-3">
+                        Change Email
+                    </button>
+
+                }
                 <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
-            </div>
-            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="w-100 btn btn-lg btn-primary">Change email</button>
-        </form>
+
+
+            </form>
+        </div>
     </div>
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

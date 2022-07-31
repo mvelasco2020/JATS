@@ -1,6 +1,6 @@
 ﻿@page
-@using JATS.Services.Interfaces
 @model IndexModel
+@using JATS.Services.Interfaces
 @inject UserManager<JTUser> UserManager;
 @inject ICompanyInfoService CompanyInfoService
 
@@ -36,6 +36,7 @@
         </button>
     </div>
 }
+
 <div class="card mt-3 mt-md-0">
     <div class="card-header">
         <h5>@currentUser.FullName</h5>
@@ -125,7 +126,7 @@
         </div>
     </div>
     <div class="card-body pt-0">
-        @if (company.Name == "SpaceX1")
+        @if (company.Name == "SpaceX")
         {
             <p class="text-danger">Some info for the demo accounts cannot be modified</p>
         }
@@ -143,6 +144,7 @@
                                name="FirstName"
                                class="form-control"
                                type="text" placeholder="John"
+                               @(company.Name =="SpaceX" ? "disabled" : "")
                                required="required"
                                value="@currentUser.FirstName">
                     </div>
@@ -156,6 +158,7 @@
                                type="text"
                                placeholder="Doe"
                                required="required"
+                               @(company.Name =="SpaceX" ? "disabled" : "")
                                value="@currentUser.LastName">
                     </div>
                 </div>
