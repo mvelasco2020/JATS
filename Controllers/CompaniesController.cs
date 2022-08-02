@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using JATS.Data;
-using JATS.Models;
-using Microsoft.AspNetCore.Authorization;
-using JATS.Services.Interfaces;
+﻿using JATS.Data;
 using JATS.Extensions;
+using JATS.Models;
+using JATS.Models.ViewModel;
+using JATS.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace JATS.Controllers
 {
@@ -18,12 +14,15 @@ namespace JATS.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ICompanyInfoService _companyService;
+        private readonly IRolesService _roleService;
 
         public CompaniesController(ApplicationDbContext context,
-            ICompanyInfoService companyService)
+            ICompanyInfoService companyService,
+            IRolesService roleService)
         {
             _context = context;
             _companyService = companyService;
+            _roleService = roleService;
         }
 
         // GET: Companies
@@ -127,6 +126,42 @@ namespace JATS.Controllers
             return View(company);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AddCompanyUser()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddCompanyUser(ManageUserRolesViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var companyId = User.Identity.GetCompanyId().Value;
+                model.JTUser.CompanyId = companyId;
+                try
+                {
+                    _context.Users.Add(model.JTUser);
+                    await _context.SaveChangesAsync();
+                    foreach (var role in model.SelectedRoles)
+                    {
+                        await _roleService.AddUserToRole(model.JTUser, role);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.Write(ex.Message);
+                    return View("Error");
+                }
+            }
+
+            return View(model);
+        }
+
+
+        /*
         // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -141,7 +176,7 @@ namespace JATS.Controllers
             {
                 return NotFound();
             }
-
+Index1.cshtml
             return View(company);
         }
 
@@ -163,6 +198,7 @@ namespace JATS.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+         */
 
         private bool CompanyExists(int id)
         {
