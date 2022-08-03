@@ -1,2 +1,74 @@
 ﻿@using JATS.Models
-@model ManageUserRolesViewModel 
+@model ManageUserRolesViewModel
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h5>Register new user</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="AddCompanyUser">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <label class="form-label"
+                           asp-for="JTUser.FirstName"></label>
+                    <div class="input-group">
+                        <input asp-for="JTUser.FirstName"
+                               class="form-control"
+                               type="text" placeholder="John">
+                    </div>
+
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <label class="form-label"
+                           asp-for="JTUser.LastName"></label>
+                    <div class="input-group">
+                        <input asp-for="JTUser.LastName"
+                               class="form-control"
+                               type="text" placeholder="John">
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3 mb-3">
+                <div class="col-sm-12 col-md-6">
+                    <label class="form-label"
+                           asp-for="JTUser.Email"></label>
+                    <div class="input-group">
+                        <input asp-for="JTUser.Email"
+                               class="form-control"
+                               type="email" placeholder="Eren.Yeager@SpaceX.net">
+                    </div>
+
+                </div>
+                 <div class="col-sm-12 col-md-6">
+                    <label class="form-label"
+                           asp-for="JTUser.PhoneNumber"></label>
+                    <div class="input-group">
+                        <input asp-for="JTUser.PhoneNumber"
+                               class="form-control"
+                               type="text" placeholder="John">
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <label class="form-label"
+                           >Select one or more roles</label>
+                    <div class="input-group">
+                        <select class="form-control"
+                                name="SelectedRoles"
+                                asp-items="@Model.Roles"
+                                multiple>
+                        </select>
+                    </div>
+            </div>
+                </div>
+
+               
+            <button type="submit"
+                class="btn btn-primary btn-rounded mt-4">Create New User</button>
+            </form>
+        </div>
+    </div>
+</div>

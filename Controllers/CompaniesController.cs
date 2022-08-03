@@ -5,6 +5,7 @@ using JATS.Models.ViewModel;
 using JATS.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace JATS.Controllers
@@ -129,7 +130,10 @@ namespace JATS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddCompanyUser()
         {
-            return View();
+
+            ManageUserRolesViewModel model = new();
+            model.Roles = new MultiSelectList(await _roleService.GetAllRolesAsync(), "Name", "Name");
+            return View(model);
         }
 
         [HttpPost]
@@ -160,45 +164,6 @@ namespace JATS.Controllers
             return View(model);
         }
 
-
-        /*
-        // GET: Companies/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Companies == null)
-            {
-                return NotFound();
-            }
-
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-Index1.cshtml
-            return View(company);
-        }
-
-        // POST: Companies/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Companies == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Companies'  is null.");
-            }
-            var company = await _context.Companies.FindAsync(id);
-            if (company != null)
-            {
-                _context.Companies.Remove(company);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-         */
 
         private bool CompanyExists(int id)
         {
