@@ -2,11 +2,15 @@
 using JATS.Extensions;
 using JATS.Models;
 using JATS.Models.ViewModel;
+using JATS.Services;
 using JATS.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace JATS.Controllers
 {
@@ -16,14 +20,20 @@ namespace JATS.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ICompanyInfoService _companyService;
         private readonly IRolesService _roleService;
+        private readonly UserManager<JTUser> _userManager;
+        private readonly IUserOperationsService _userOpsService;
 
         public CompaniesController(ApplicationDbContext context,
             ICompanyInfoService companyService,
-            IRolesService roleService)
+            IRolesService roleService,
+            UserManager<JTUser> userManager,
+            IUserOperationsService userOpsService)
         {
             _context = context;
             _companyService = companyService;
             _roleService = roleService;
+            _userManager = userManager;
+            _userOpsService = userOpsService;
         }
 
         // GET: Companies
@@ -36,138 +46,112 @@ namespace JATS.Controllers
             return View(company);
         }
 
-        // GET: Companies/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Companies == null)
-            {
-                return NotFound();
-            }
-
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-
-            return View(company);
-        }
-
-        // GET: Companies/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Companies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Company company)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(company);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(company);
-        }
-
-        // GET: Companies/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Companies == null)
-            {
-                return NotFound();
-            }
-
-            var company = await _context.Companies.FindAsync(id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-            return View(company);
-        }
-
-        // POST: Companies/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Company company)
-        {
-            if (id != company.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompanyExists(company.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(company);
-        }
 
         [HttpGet]
         public async Task<IActionResult> AddCompanyUser()
         {
 
-            ManageUserRolesViewModel model = new();
+            AddCompanyUserViewModel model = new();
             model.Roles = new MultiSelectList(await _roleService.GetAllRolesAsync(), "Name", "Name");
             return View(model);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddCompanyUser(ManageUserRolesViewModel model)
+        public async Task<IActionResult> AddCompanyUser(AddCompanyUserViewModel model)
         {
+            model.Roles = new MultiSelectList(await _roleService.GetAllRolesAsync(), "Name", "Name", model.SelectedRoles);
+
             if (ModelState.IsValid)
             {
-                var companyId = User.Identity.GetCompanyId().Value;
-                model.JTUser.CompanyId = companyId;
-                try
+                if (!IsValidEmail(model.Email))
                 {
-                    _context.Users.Add(model.JTUser);
-                    await _context.SaveChangesAsync();
-                    foreach (var role in model.SelectedRoles)
-                    {
-                        await _roleService.AddUserToRole(model.JTUser, role);
-                    }
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError("UserError", $" '{model.Email}' is not a valid email address");
+                    return View(model);
                 }
-                catch (Exception ex)
+
+                if ((await _userManager.FindByEmailAsync(model.Email)) != null)
                 {
-                    Console.Write(ex.Message);
-                    return View("Error");
+                    ModelState.AddModelError("UserError", $"Email '{model.Email}' is already taken.");
+                    return View(model);
+                }
+
+                var companyId = User.Identity.GetCompanyId().Value;
+                bool result = await _userOpsService.AddCompanyUserWithRolesAsync(model, companyId);
+
+                if (result == true)
+                {
+                    model.Roles = new MultiSelectList(await _roleService.GetAllRolesAsync(), "Name", "Name");
+                    ViewData["SucessMessage"] = "Sucessfully created a new user account.";
+                    return View();
+                }
+                else
+                {
+                    ViewData["ErrorMessage"] = "Something went wrong a new user account.";
+                    return View(model);
                 }
             }
 
             return View(model);
         }
 
-
-        private bool CompanyExists(int id)
+        private bool IsValidEmail(string email)
         {
-            return (_context.Companies?.Any(e => e.Id == id)).GetValueOrDefault();
+            var trimmedEmail = email.Trim();
+
+            if (trimmedEmail.EndsWith("."))
+            {
+                return false; // suggested by @TK-421
+            }
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == trimmedEmail;
+            }
+            catch
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                    return false;
+
+                try
+                {
+                    // Normalize the domain
+                    email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
+                                          RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+                    // Examines the domain part of the email and normalizes it.
+                    string DomainMapper(Match match)
+                    {
+                        // Use IdnMapping class to convert Unicode domain names.
+                        var idn = new IdnMapping();
+
+                        // Pull out and process domain name (throws ArgumentException on invalid)
+                        string domainName = idn.GetAscii(match.Groups[2].Value);
+
+                        return match.Groups[1].Value + domainName;
+                    }
+                }
+                catch (RegexMatchTimeoutException e)
+                {
+                    return false;
+                }
+                catch (ArgumentException e)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    return Regex.IsMatch(email,
+                        @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                        RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+                }
+                catch (RegexMatchTimeoutException)
+                {
+                    return false;
+                }
+            }
         }
+
     }
 }

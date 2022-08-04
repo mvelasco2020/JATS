@@ -42,6 +42,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IInviteService, InviteService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ILookupService, LookupService>();
+builder.Services.AddScoped<IUserOperationsService, UserOperationsService>();
 ///
 
 //Mail Services/Setttings

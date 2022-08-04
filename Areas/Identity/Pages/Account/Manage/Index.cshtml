@@ -30,7 +30,7 @@
 @if (TempData["ErrorMessage"]?.ToString().Length > 2)
 {
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span class="alert-text"><strong>Danger!</strong> This is a danger alert—check it out!</span>
+        <span class="alert-text text-light"><strong>Danger!</strong>@TempData["ErrorMessage"]</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>

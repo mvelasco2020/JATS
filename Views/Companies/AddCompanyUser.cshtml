@@ -1,73 +1,117 @@
 ﻿@using JATS.Models
-@model ManageUserRolesViewModel
+@model AddCompanyUserViewModel
 
 <div class="container">
+    @if (ViewData["SuccessMessage"]?.ToString().Length > 2)
+    {
+        <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+            <span class="alert-text text-light"><strong>Success!</strong> @ViewData["SuccessMessage"]</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    @if (ViewData["ErrorMessage"]?.ToString().Length > 2)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span class="alert-text text-light"><strong>Danger!</strong> @ViewData["ErrorMessage"]</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
     <div class="card">
         <div class="card-header">
             <h5>Register new user</h5>
         </div>
         <div class="card-body">
             <form asp-action="AddCompanyUser">
-            <div class="row">
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label"
-                           asp-for="JTUser.FirstName"></label>
-                    <div class="input-group">
-                        <input asp-for="JTUser.FirstName"
-                               class="form-control"
-                               type="text" placeholder="John">
-                    </div>
+                <div asp-validation-summary="All"
+                     class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <label class="form-label"
+                               asp-for="FirstName"></label>
+                        <div class="input-group">
+                            <input asp-for="FirstName"
+                                   class="form-control"
+                                   type="text" placeholder="John">
+                        </div>
 
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label"
-                           asp-for="JTUser.LastName"></label>
-                    <div class="input-group">
-                        <input asp-for="JTUser.LastName"
-                               class="form-control"
-                               type="text" placeholder="John">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label class="form-label"
+                               asp-for="LastName"></label>
+                        <div class="input-group">
+                            <input asp-for="LastName"
+                                   class="form-control"
+                                   type="text" placeholder="John">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row mt-3 mb-3">
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label"
-                           asp-for="JTUser.Email"></label>
-                    <div class="input-group">
-                        <input asp-for="JTUser.Email"
-                               class="form-control"
-                               type="email" placeholder="Eren.Yeager@SpaceX.net">
-                    </div>
+                <div class="row mt-3 mb-3">
+                    <div class="col-sm-12 col-md-6">
+                        <label class="form-label"
+                               asp-for="Email"></label>
+                        <div class="input-group">
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   type="email" placeholder="Eren.Yeager@SpaceX.net">
+                        </div>
 
-                </div>
-                 <div class="col-sm-12 col-md-6">
-                    <label class="form-label"
-                           asp-for="JTUser.PhoneNumber"></label>
-                    <div class="input-group">
-                        <input asp-for="JTUser.PhoneNumber"
-                               class="form-control"
-                               type="text" placeholder="John">
                     </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label class="form-label"
+                               asp-for="PhoneNumber"></label>
+                        <div class="input-group">
+                            <input asp-for="PhoneNumber"
+                                   class="form-control"
+                                   type="text" placeholder="972-000-0000">
+                        </div>
 
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label"
-                           >Select one or more roles</label>
-                    <div class="input-group">
-                        <select class="form-control"
-                                name="SelectedRoles"
-                                asp-items="@Model.Roles"
-                                multiple>
-                        </select>
                     </div>
-            </div>
+                </div>
+                <div class="row mt-3 mb-3">
+                    <div class="col-sm-12 col-md-6">
+                        <label class="form-label"
+                               asp-for="Password"></label>
+                        <div class="input-group">
+                            <input asp-for="Password"
+                                   class="form-control"
+                                   type="password" placeholder="*********">
+                        </div>
+
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <label class="form-label"
+                               asp-for="ConfirmPassword"></label>
+                        <div class="input-group">
+                            <input asp-for="ConfirmPassword"
+                                   class="form-control"
+                                   type="password" placeholder="*********">
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <label class="form-label">Select one or more roles</label>
+                        <div class="input-group">
+                            <select class="form-control"
+                                    name="SelectedRoles"
+                                    asp-items="@Model.Roles"
+                                    multiple>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-               
-            <button type="submit"
-                class="btn btn-primary btn-rounded mt-4">Create New User</button>
+
+                <button type="submit"
+                        class="btn btn-primary btn-rounded mt-4">
+                    Create New User
+                </button>
             </form>
         </div>
     </div>
