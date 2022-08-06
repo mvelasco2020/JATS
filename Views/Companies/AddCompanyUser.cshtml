@@ -2,7 +2,7 @@
 @model AddCompanyUserViewModel
 
 <div class="container">
-    @if (ViewData["SuccessMessage"]?.ToString().Length > 2)
+    @if (ViewData["SucessMessage"]?.ToString().Length > 2)
     {
         <div class="alert alert-secondary alert-dismissible fade show" role="alert">
             <span class="alert-text text-light"><strong>Success!</strong> @ViewData["SuccessMessage"]</span>

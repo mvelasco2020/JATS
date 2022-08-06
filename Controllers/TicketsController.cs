@@ -22,6 +22,7 @@ namespace JATS.Controllers
         private readonly ILookupService _lookupService;
         private readonly IFileService _fileService;
         private readonly ITicketHistoryService _historyService;
+        private readonly IRolesService _rolesService;
 
         public TicketsController(ApplicationDbContext context,
                                 UserManager<JTUser> userManager,
@@ -29,7 +30,8 @@ namespace JATS.Controllers
                                 ITicketService ticketService,
                                 ILookupService lookupService,
                                 IFileService fileService,
-                                ITicketHistoryService historyService)
+                                ITicketHistoryService historyService,
+                                IRolesService rolesService)
         {
             _context = context;
             _userManager = userManager;
@@ -38,6 +40,7 @@ namespace JATS.Controllers
             _lookupService = lookupService;
             _fileService = fileService;
             _historyService = historyService;
+            _rolesService = rolesService;
         }
 
         // GET: Tickets
@@ -72,8 +75,17 @@ namespace JATS.Controllers
                 return NotFound();
             }
 
+            if (ticket.Project.isPrimordial == true)
+            {
+                ViewData["TicketTechnician"] = new SelectList((await _rolesService.GetUsersInRoleAsync(nameof(Roles.Technician), ticket.Project.CompanyId.Value)), "Id", "FullName");
 
-            ViewData["TicketTechnician"] = new SelectList(await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, nameof(Roles.Technician)), "Id", "FullName");
+            }
+            else
+            {
+                ViewData["TicketTechnician"] = new SelectList(await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, nameof(Roles.Technician)), "Id", "FullName", ticket.TechnicianUserId);
+
+            }
+
             ViewData["TicketPriorityId"] = new SelectList((await _lookupService.GetTicketPrioritiesAsync()), "Id", "Name", ticket.TicketPriorityId);
             ViewData["TicketStatusId"] = new SelectList((await _lookupService.GetTicketStatusesAsync()), "Id", "Name", ticket.TicketStatusId);
             ViewData["TicketTypeId"] = new SelectList((await _lookupService.GetTicketTypesAsync()), "Id", "Name", ticket.TicketTypeId);
@@ -155,6 +167,7 @@ namespace JATS.Controllers
         }
 
         // GET: Tickets/Edit/5
+        /*
         public async Task<IActionResult> Edit(int? id)
         {
 
@@ -186,6 +199,7 @@ namespace JATS.Controllers
             }
 
         }
+         */
 
         // POST: Tickets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -273,29 +287,6 @@ namespace JATS.Controllers
             }
         }
 
-        /*To be deleted 
-        [HttpGet]
-        public async Task<IActionResult> ArchiveTicket(int? id)
-        {
-
-
-            if ((!await TicketExists(id.Value)) || id is null)
-
-                return NotFound();
-
-            JTUser user = await _userManager.GetUserAsync(User);
-            var ticket = await _ticketService.GetTicketByIdAsync(id.Value);
-            if (await IsUserAuthorizedToMakeChanges(user, ticket))
-            {
-                return View(ticket);
-            }
-            else
-            {
-                return Unauthorized();
-            }
-        }
-         */
-
 
         [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> UnassignedTickets()
@@ -330,7 +321,9 @@ namespace JATS.Controllers
             if (model.Ticket.Project.isPrimordial == true)
             {
                 List<JTUser> users = _context
-                    .Users.Where(u => u.CompanyId == User.Identity.GetCompanyId().Value).ToList();
+                    .Users.Where(u => u.CompanyId == User.Identity.GetCompanyId()
+                    .Value).ToList();
+
                 model.Technicians = new SelectList(users, "Id", "FullName");
 
             }

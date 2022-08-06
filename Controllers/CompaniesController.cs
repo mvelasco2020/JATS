@@ -67,13 +67,11 @@ namespace JATS.Controllers
                 if (!IsValidEmail(model.Email))
                 {
                     ModelState.AddModelError("UserError", $" '{model.Email}' is not a valid email address");
-                    return View(model);
                 }
 
                 if ((await _userManager.FindByEmailAsync(model.Email)) != null)
                 {
                     ModelState.AddModelError("UserError", $"Email '{model.Email}' is already taken.");
-                    return View(model);
                 }
 
                 var companyId = User.Identity.GetCompanyId().Value;
@@ -83,12 +81,11 @@ namespace JATS.Controllers
                 {
                     model.Roles = new MultiSelectList(await _roleService.GetAllRolesAsync(), "Name", "Name");
                     ViewData["SucessMessage"] = "Sucessfully created a new user account.";
-                    return View();
                 }
                 else
                 {
-                    ViewData["ErrorMessage"] = "Something went wrong a new user account.";
-                    return View(model);
+                    ViewData["ErrorMessage"] = "Something went wrong while creating a new account, Please check if all fields have a correct input.";
+
                 }
             }
 

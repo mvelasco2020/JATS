@@ -6,10 +6,10 @@
 
 @{
     ViewData["Title"] = "Projects";
-    var upCommingProjects = Model.Where(p => p.StartDate > DateTime.Now).Count();
-    var inProgressProjects = Model.Where(p => p.StartDate < DateTime.Now || p.EndDate > DateTime.Now && p.Archived == false).Count();
-    var completedProjects = Model.Where(p => p.EndDate < DateTime.Now).Count();
-    var archivedProjects = Model.Where(p => p.Archived == true).Count();
+    var upCommingProjects = Model.Where(p => p.StartDate > DateTime.Now && p.isPrimordial == false).Count();
+    var inProgressProjects = Model.Where(p => (p.StartDate < DateTime.Now || p.EndDate > DateTime.Now) && p.Archived == false && p.isPrimordial != true).Count();
+    var completedProjects = Model.Where(p => p.EndDate < DateTime.Now && p.isPrimordial == false).Count();
+    var archivedProjects = Model.Where(p => p.Archived == true && p.isPrimordial == false).Count();
 }
 
 <div class="container">
@@ -133,11 +133,11 @@
             <div>
                 @if (User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
                 {
-                <a asp-controller="Projects"
+                    <a asp-controller="Projects"
                asp-action="Create"
                class="btn btn-icon bg-gradient-primary">
-                    New Project
-                </a>
+                        New Project
+                    </a>
                 }
             </div>
         </div>
@@ -160,7 +160,7 @@
                 </thead>
                 <tbody>
 
-                    @foreach (var project in Model)
+                    @foreach (var project in Model.Where(p => p.isPrimordial != true))
                     {
                         <tr>
                             <td>
