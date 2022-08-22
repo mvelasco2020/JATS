@@ -2,13 +2,11 @@
 using JATS.Extensions;
 using JATS.Models;
 using JATS.Models.ViewModel;
-using JATS.Services;
 using JATS.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -46,6 +44,44 @@ namespace JATS.Controllers
             return View(company);
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> EditCompanyDetails()
+        {
+            Company company = await _companyService
+                .GetCompanyByIdAsync(User.Identity.GetCompanyId().Value);
+
+            return View(company);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> EditCompanyDetails(Company company)
+        {
+            Company userCompany = await _companyService
+                .GetCompanyByIdAsync(User.Identity.GetCompanyId().Value);
+            if (company.Id == userCompany.Id)
+            {
+                userCompany.Name = company.Name;
+                userCompany.Description = company.Description;
+                userCompany.SocialMediaFacebook = company.SocialMediaFacebook;
+                userCompany.SocialMediaInstagram = company.SocialMediaInstagram;
+                userCompany.SocialMediaTwitter = company.SocialMediaTwitter;
+                userCompany.PhoneNumber = company.PhoneNumber;
+                userCompany.Email = company.Email;
+                try
+                {
+                    _context.Update(userCompany);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
 
         [HttpGet]
         public async Task<IActionResult> AddCompanyUser()

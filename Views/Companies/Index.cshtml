@@ -213,14 +213,18 @@
                             <div class="col-md-8 d-flex align-items-center">
                                 <h6 class="mb-0">Company Information</h6>
                             </div>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                
                             <div class="col-md-4 text-end">
-                                <a href="javascript:;">
+                                <a asp-action="EditCompanyDetails">
                                     <i class="fas fa-user-edit text-secondary text-sm"
                                        data-bs-toggle="tooltip"
                                        data-bs-placement="top"
-                                       title="Edit Profile"></i>
+                                       title="Edit Company Details"></i>
                                 </a>
                             </div>
+                            }
                         </div>
                     </div>
                     <div class="card-body p-3">
@@ -233,12 +237,12 @@
                                 <strong class="text-dark">Name</strong> &nbsp; @Model.Name
                             </li>
                             <li class="list-group-item border-0 ps-0 text-sm">
-                                <strong class="text-dark">Mobile:</strong> &nbsp; Company phonenumber
+                                <strong class="text-dark">Phone:</strong> &nbsp; @Model.PhoneNumber
                             </li>
                             <li class="list-group-item border-0 ps-0 text-sm">
                                 <strong class="text-dark">Email:</strong> &nbsp;
                                 <a href="mailto:@user.Email"
-                                   class="__cf_email__">@user.Email</a>
+                                   class="__cf_email__">@Model.Email</a>
                             </li>
                             <li class="list-group-item border-0 ps-0 text-sm">
                                 <strong class="text-dark">Location:</strong> &nbsp; USA
@@ -246,15 +250,18 @@
                             <li class="list-group-item border-0 ps-0 pb-0">
                                 <strong class="text-dark text-sm">Social:</strong> &nbsp;
                                 <a class="btn btn-facebook btn-simple mb-0 ps-1 pe-2 py-0"
-                                   href="javascript:;">
-                                    <i class="fab fa-facebook fa-lg"></i>
+                                target="_blank" rel="noopener noreferrer"    
+                                href="@Model.SocialMediaFacebook">
+                                    <i class="fab fa-facebook fa-lg">@Model.SocialMediaFacebook</i>
                                 </a>
                                 <a class="btn btn-twitter btn-simple mb-0 ps-1 pe-2 py-0"
-                                   href="javascript:;">
+                                target="_blank" rel="noopener noreferrer"    
+                                href="@Model.SocialMediaTwitter">
                                     <i class="fab fa-twitter fa-lg"></i>
                                 </a>
                                 <a class="btn btn-instagram btn-simple mb-0 ps-1 pe-2 py-0"
-                                   href="javascript:;">
+                                target="_blank" rel="noopener noreferrer"    
+                                href="@Model.SocialMediaInstagram">
                                     <i class="fab fa-instagram fa-lg"></i>
                                 </a>
                             </li>
@@ -373,10 +380,8 @@
                                     <td>
                                         <div class="d-flex px-2 py-1">
                                             <div>
-
                                                 @if (member?.AvatarData != null)
                                                 {
-
                                                     <img alt="Image placeholder"
                                                  class="avatar avatar-sm me-3"
                                                  src="data:image/*;base64,@(Convert.ToBase64String(member.AvatarData))" />
