@@ -21,9 +21,26 @@
 
     @*Current User*@
     <div class="container-fluid">
-        <div class="page-header min-height-300 border-radius-xl mt-4"
-             style="background-image: url('img/curved-images/curved0.jpg');background-position-y: 50%; background-size:cover">
-            <span class="mask bg-gradient-primary opacity-6"></span>
+        @{
+            string bgStyle = "";
+
+        }
+        <div class="page-header min-height-300 border-radius-xl mt-4">
+            @if (Model.CompanyBG is not null)
+            {
+                <img class="border-radius-lg shadow-lg mx-auto"
+                 style="height:100%; object-fit:cover;max-height:380px;width:100%;"
+                 src="data:image/*;base64,@(Convert.ToBase64String(Model.CompanyBG))"
+                 alt="company image">
+            }
+            else
+            {
+                <img class="border-radius-lg shadow-lg mx-auto"
+                 style="height:100%; object-fit:cover;max-height:380px;width:100%;"
+                 src="~/img/curved-images/curved0.jpg"
+                 alt="company image">
+            }
+            <span class="mask opacity-6"></span>
         </div>
         <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
             <div class="row gx-4">
@@ -92,8 +109,6 @@
                             <div class="col-lg-1 col-md-2 col-sm-3 col-4 text-center">
                                 <a href="javascript:;"
                                class="avatar avatar-lg rounded-circle border border-primary">
-
-
                                     @if (member?.AvatarData != null)
                                     {
 
@@ -107,9 +122,6 @@
                                      alt="Image placeholder"
                                      class="p-1" />
                                     }
-
-
-
                                 </a>
                                 <p class="mb-0 text-sm">@member.FirstName @member.LastName[0]</p>
                             </div>
@@ -215,15 +227,15 @@
                             </div>
                             @if (User.IsInRole("Admin"))
                             {
-                                
-                            <div class="col-md-4 text-end">
-                                <a asp-action="EditCompanyDetails">
-                                    <i class="fas fa-user-edit text-secondary text-sm"
+
+                                <div class="col-md-4 text-end">
+                                    <a asp-action="EditCompanyDetails">
+                                        <i class="fas fa-user-edit text-secondary text-sm"
                                        data-bs-toggle="tooltip"
                                        data-bs-placement="top"
                                        title="Edit Company Details"></i>
-                                </a>
-                            </div>
+                                    </a>
+                                </div>
                             }
                         </div>
                     </div>
@@ -250,18 +262,18 @@
                             <li class="list-group-item border-0 ps-0 pb-0">
                                 <strong class="text-dark text-sm">Social:</strong> &nbsp;
                                 <a class="btn btn-facebook btn-simple mb-0 ps-1 pe-2 py-0"
-                                target="_blank" rel="noopener noreferrer"    
-                                href="@Model.SocialMediaFacebook">
+                                   target="_blank" rel="noopener noreferrer"
+                                   href="@Model.SocialMediaFacebook">
                                     <i class="fab fa-facebook fa-lg">@Model.SocialMediaFacebook</i>
                                 </a>
                                 <a class="btn btn-twitter btn-simple mb-0 ps-1 pe-2 py-0"
-                                target="_blank" rel="noopener noreferrer"    
-                                href="@Model.SocialMediaTwitter">
+                                   target="_blank" rel="noopener noreferrer"
+                                   href="@Model.SocialMediaTwitter">
                                     <i class="fab fa-twitter fa-lg"></i>
                                 </a>
                                 <a class="btn btn-instagram btn-simple mb-0 ps-1 pe-2 py-0"
-                                target="_blank" rel="noopener noreferrer"    
-                                href="@Model.SocialMediaInstagram">
+                                   target="_blank" rel="noopener noreferrer"
+                                   href="@Model.SocialMediaInstagram">
                                     <i class="fab fa-instagram fa-lg"></i>
                                 </a>
                             </li>
@@ -275,7 +287,13 @@
             @*Right Column*@
             <div class="col-12 col-lg-4 col-xl-4 mt-4 mt-lg-0">
                 @*Coversations*@
-                <div class="card">
+                <div class="card" style="position: relative;">
+
+                    <div class="rounded-1" style="z-index:10; position:absolute; top:0; left:0; width:100%; height:100%; background-color:gray; opacity: .8;">
+                    </div>
+                        <div style="z-index: 11; position: absolute; top:50%; right:50%; width:100%; transform: translate(50%,-50%);">
+                        <h6 class="text-white display-6 text-center">Feature Locked.</h6>
+                        </div>
                     <div class="card-header pb-0 p-3">
                         <h6 class="mb-0">Conversations</h6>
                     </div>
@@ -283,7 +301,7 @@
                         <ul class="list-group">
                             <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
                                 <div class="avatar me-3">
-                                    <img src="../../../assets/img/kal-visuals-square.jpg"
+                                    <img src="~/img/kal-visuals-square.jpg"
                                          alt="kal"
                                          class="border-radius-lg shadow" />
                                 </div>
@@ -296,7 +314,7 @@
                             </li>
                             <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
                                 <div class="avatar me-3">
-                                    <img src="../../../assets/img/marie.jpg"
+                                    <img src="~/img/marie.jpg"
                                          alt="kal"
                                          class="border-radius-lg shadow" />
                                 </div>
@@ -309,7 +327,7 @@
                             </li>
                             <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
                                 <div class="avatar me-3">
-                                    <img src="../../../assets/img/ivana-square.jpg"
+                                    <img src="~/img/ivana-square.jpg"
                                          alt="kal"
                                          class="border-radius-lg shadow" />
                                 </div>
@@ -322,7 +340,7 @@
                             </li>
                             <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
                                 <div class="avatar me-3">
-                                    <img src="../../../assets/img/team-4.jpg"
+                                    <img src="~/img/team-4.jpg"
                                          alt="kal"
                                          class="border-radius-lg shadow" />
                                 </div>
@@ -335,7 +353,7 @@
                             </li>
                             <li class="list-group-item border-0 d-flex align-items-center px-0">
                                 <div class="avatar me-3">
-                                    <img src="../../../assets/img/team-3.jpg"
+                                    <img src="~/img/team-3.jpg"
                                          alt="kal"
                                          class="border-radius-lg shadow" />
                                 </div>
@@ -352,10 +370,7 @@
                 @*Conversations*@
             </div>
         </div>
-
         <div class="mt-4">
-
-
             @*User Info Table*@
             <div class="card">
                 <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
@@ -402,7 +417,6 @@
                                     <td>
                                         @{
                                             var memberRole = (await RoleService.GetUserRolesAsync(member));
-
                                         }
                                         <p class="text-xs font-weight-bold mb-0">@memberRole.First()</p>
                                     </td>
@@ -419,25 +433,18 @@
                                     </td>
                                 </tr>
                             }
-
-
                         </tbody>
                     </table>
                 </div>
             </div>
-
             @*User Info Table*@
-
-
         </div>
     </div>
 </div>
 
 
 @section scripts{
-
     <script>
-
         const dataTableBasic = new simpleDatatables.DataTable("#datatable", {
             searchable: true,
             fixedHeight: true

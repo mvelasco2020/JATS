@@ -6,77 +6,88 @@
 
 <div class="container">
     <div class="row">
-<div class="card">
-    <div class="card-header">
-        Edit Company Details
+        <div class="card">
+            <div class="card-header">
+                Edit Company Details
+            </div>
+            <div class="card-body">
+
+                <form asp-action="EditCompanyDetails" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea rows="4" asp-for="Description" class="form-control"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="control-label"></label>
+                        <input type="text" asp-for="PhoneNumber" placeholder="214-223-4494" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input type="email" asp-for="Email" placeholder="Contact@SpaceX.com" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="SocialMediaFacebook" class="control-label"></label>
+                        <input type="text" asp-for="SocialMediaFacebook" placeholder="https://www.facebook.com/spacextechnologies/" class="form-control" />
+                        <span asp-validation-for="SocialMediaFacebook" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label asp-for="SocialMediaTwitter" class="control-label"></label>
+                        <input type="text" asp-for="SocialMediaTwitter" placeholder="https://twitter.com/SpaceX" class="form-control" />
+                        <span asp-validation-for="SocialMediaTwitter" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label asp-for="SocialMediaInstagram" class="control-label"></label>
+                        <input type="text" asp-for="SocialMediaInstagram" placeholder="https://www.instagram.com/spacexx" class="form-control" />
+                        <span asp-validation-for="SocialMediaInstagram" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label">Company Background Image</label>
+                        <input class="form-control form-control-sm"
+                               asp-for="CompanyBGFormFile"
+                               id="formFileSm"
+                               type="file"
+                               accept=".png, .jpg, .jpeg, .gif">
+                        <span asp-validation-for="CompanyBGFormFile" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <input type="submit" value="Save" class="btn btn-primary btn-round" />
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-footer">
+                <a asp-action="Index">Back</a>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-
-        <form asp-action="EditCompanyDetails">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea rows="4" asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input type="text" asp-for="PhoneNumber" placeholder="214-223-4494" class="form-control"/>
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input type="email" asp-for="Email" placeholder="Contact@SpaceX.com" class="form-control"/>
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="SocialMediaFacebook" class="control-label"></label>
-                <input type="text" asp-for="SocialMediaFacebook" placeholder="https://www.facebook.com/spacextechnologies/" class="form-control"/>
-                <span asp-validation-for="SocialMediaFacebook" class="text-danger"></span>
-            </div>
-
-            
-            <div class="form-group">
-                <label asp-for="SocialMediaTwitter" class="control-label"></label>
-                <input type="text" asp-for="SocialMediaTwitter" placeholder="https://twitter.com/SpaceX" class="form-control"/>
-                <span asp-validation-for="SocialMediaTwitter" class="text-danger"></span>
-            </div>
-
-            
-            <div class="form-group">
-                <label asp-for="SocialMediaInstagram" class="control-label"></label>
-                <input type="text" asp-for="SocialMediaInstagram" placeholder="https://www.instagram.com/spacexx" class="form-control"/>
-                <span asp-validation-for="SocialMediaInstagram" class="text-danger"></span>
-            </div>
-
-            
-
-            <div class="form-group mt-2">
-                <input type="submit" value="Save" class="btn btn-primary btn-round" />
-            </div>
-        </form>
-    </div>
-    
-<div class="card-footer">
-    <a asp-action="Index">Back</a>
 </div>
-</div>
-    </div>
-</div >
 
 
 
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

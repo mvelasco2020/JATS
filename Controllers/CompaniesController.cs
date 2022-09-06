@@ -20,18 +20,21 @@ namespace JATS.Controllers
         private readonly IRolesService _roleService;
         private readonly UserManager<JTUser> _userManager;
         private readonly IUserOperationsService _userOpsService;
+        private readonly IFileService _fileService;
 
         public CompaniesController(ApplicationDbContext context,
             ICompanyInfoService companyService,
             IRolesService roleService,
             UserManager<JTUser> userManager,
-            IUserOperationsService userOpsService)
+            IUserOperationsService userOpsService,
+            IFileService fileService)
         {
             _context = context;
             _companyService = companyService;
             _roleService = roleService;
             _userManager = userManager;
             _userOpsService = userOpsService;
+            _fileService = fileService;
         }
 
         // GET: Companies
@@ -69,6 +72,15 @@ namespace JATS.Controllers
                 userCompany.SocialMediaTwitter = company.SocialMediaTwitter;
                 userCompany.PhoneNumber = company.PhoneNumber;
                 userCompany.Email = company.Email;
+
+                if (company.CompanyBGFormFile is not null)
+                {
+                    userCompany.CompanyBG = await _fileService
+                        .ConvertFileToByteArrayAsync(company.CompanyBGFormFile);
+                    userCompany.CompanyBGFileName = company.CompanyBGFileName;
+                    userCompany.CompanyBGFileContentType = company.CompanyBGFileContentType;
+                }
+
                 try
                 {
                     _context.Update(userCompany);
